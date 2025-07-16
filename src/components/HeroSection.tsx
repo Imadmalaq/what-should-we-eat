@@ -16,13 +16,13 @@ export function HeroSection({ onStartQuiz }: HeroSectionProps) {
           {/* Main Hero */}
           <div className="space-y-6 animate-fade-in">
             <h1 className="text-4xl md:text-6xl font-bold text-foreground leading-tight">
-              What Should I{' '}
-              <span className="bg-gradient-food bg-clip-text text-transparent animate-wiggle">
+              What Should We{' '}
+              <span className="bg-gradient-romantic bg-clip-text text-transparent animate-wiggle">
                 Eat?
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-              Stop the endless food decisions! Take our quick quiz and discover your perfect meal in under 2 minutes.
+              She says "I don't know" again? Skip the back-and-forth and find the perfect meal for both of you in 2 minutes!
             </p>
           </div>
 
@@ -53,7 +53,7 @@ export function HeroSection({ onStartQuiz }: HeroSectionProps) {
           <div className="grid md:grid-cols-3 gap-6 mt-16 animate-fade-in">
             <Card className="border-0 shadow-soft hover:shadow-warm transition-all duration-300 transform hover:scale-105">
               <CardContent className="p-6 text-center space-y-3">
-                <div className="w-12 h-12 mx-auto bg-gradient-food rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 mx-auto bg-gradient-romantic rounded-full flex items-center justify-center">
                   <Clock className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-lg font-semibold">Quick & Easy</h3>
@@ -63,7 +63,7 @@ export function HeroSection({ onStartQuiz }: HeroSectionProps) {
 
             <Card className="border-0 shadow-soft hover:shadow-warm transition-all duration-300 transform hover:scale-105">
               <CardContent className="p-6 text-center space-y-3">
-                <div className="w-12 h-12 mx-auto bg-gradient-food rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 mx-auto bg-gradient-romantic rounded-full flex items-center justify-center">
                   <Heart className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-lg font-semibold">Personalized</h3>
@@ -73,7 +73,7 @@ export function HeroSection({ onStartQuiz }: HeroSectionProps) {
 
             <Card className="border-0 shadow-soft hover:shadow-warm transition-all duration-300 transform hover:scale-105">
               <CardContent className="p-6 text-center space-y-3">
-                <div className="w-12 h-12 mx-auto bg-gradient-food rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 mx-auto bg-gradient-romantic rounded-full flex items-center justify-center">
                   <Utensils className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-lg font-semibold">Variety</h3>
@@ -85,8 +85,8 @@ export function HeroSection({ onStartQuiz }: HeroSectionProps) {
           {/* Testimonial */}
           <div className="mt-12 animate-fade-in">
             <blockquote className="text-lg italic text-muted-foreground max-w-2xl mx-auto">
-              "Finally! No more staring into the fridge wondering what to eat. This quiz actually gets me!" 
-              <span className="block mt-2 text-sm font-medium text-foreground">- Every indecisive food lover</span>
+              "No more asking 'what do you want to eat?' and getting 'I don't know.' This saves us so much time!" 
+              <span className="block mt-2 text-sm font-medium text-foreground">- Happy couples everywhere</span>
             </blockquote>
           </div>
         </div>

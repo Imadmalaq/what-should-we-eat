@@ -71,7 +71,7 @@ export default {
 			},
 			backgroundImage: {
 				'gradient-warm': 'var(--gradient-warm)',
-				'gradient-food': 'var(--gradient-food)',
+				'gradient-romantic': 'var(--gradient-romantic)',
 				'gradient-primary': 'var(--gradient-primary)'
 			},
 			boxShadow: {
