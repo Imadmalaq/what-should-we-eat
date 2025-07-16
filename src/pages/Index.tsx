@@ -1,12 +1,46 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from 'react';
+import { HeroSection } from '@/components/HeroSection';
+import { QuizFlow } from '@/components/QuizFlow';
+import { ResultPage } from '@/components/ResultPage';
+import { QuizResult } from '@/types/quiz';
+
+type AppState = 'hero' | 'quiz' | 'result';
 
 const Index = () => {
+  const [appState, setAppState] = useState<AppState>('hero');
+  const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
+
+  const handleStartQuiz = () => {
+    setAppState('quiz');
+  };
+
+  const handleQuizComplete = (result: QuizResult) => {
+    setQuizResult(result);
+    setAppState('result');
+  };
+
+  const handleRestart = () => {
+    setQuizResult(null);
+    setAppState('hero');
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen">
+      {appState === 'hero' && (
+        <HeroSection onStartQuiz={handleStartQuiz} />
+      )}
+      
+      {appState === 'quiz' && (
+        <div className="min-h-screen bg-gradient-warm py-12">
+          <QuizFlow onComplete={handleQuizComplete} />
+        </div>
+      )}
+      
+      {appState === 'result' && quizResult && (
+        <div className="min-h-screen bg-gradient-warm py-12">
+          <ResultPage result={quizResult} onRestart={handleRestart} />
+        </div>
+      )}
     </div>
   );
 };
