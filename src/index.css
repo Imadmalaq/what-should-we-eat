@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Couple's Food Decision App - Romantic, loving colors */
+/* WhatShouldWeEat - Tinder-style couples food decision app */
 
 @layer base {
   :root {
@@ -16,10 +16,10 @@
     --popover: 0 0% 100%;
     --popover-foreground: 340 15% 15%;
 
-    /* Primary - romantic coral/pink for couples theme */
-    --primary: 350 75% 60%;
+    /* Primary - warm coral/pink inspired by Tinder */
+    --primary: 345 82% 65%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 340 80% 70%;
+    --primary-glow: 335 85% 75%;
 
     /* Secondary - soft blush */
     --secondary: 330 30% 95%;
@@ -40,10 +40,10 @@
     --input: 330 20% 90%;
     --ring: 350 75% 60%;
 
-    /* Romantic gradients */
+    /* Tinder-inspired gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
     --gradient-warm: linear-gradient(180deg, hsl(330 25% 98%), hsl(320 20% 96%));
-    --gradient-romantic: linear-gradient(135deg, hsl(350 75% 60%), hsl(340 70% 65%), hsl(15 60% 65%));
+    --gradient-romantic: linear-gradient(135deg, hsl(345 82% 65%), hsl(335 85% 75%), hsl(15 60% 65%));
     
     /* Elegant shadows with romantic tones */
     --shadow-warm: 0 10px 30px -10px hsl(var(--primary) / 0.2);
