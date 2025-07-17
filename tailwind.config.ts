@@ -72,13 +72,11 @@ export default {
 			backgroundImage: {
 				'gradient-warm': 'var(--gradient-warm)',
 				'gradient-romantic': 'var(--gradient-romantic)',
-				'gradient-lovely': 'var(--gradient-lovely)',
 				'gradient-primary': 'var(--gradient-primary)'
 			},
 			boxShadow: {
 				'warm': 'var(--shadow-warm)',
-				'soft': 'var(--shadow-soft)',
-				'lovely': 'var(--shadow-lovely)'
+				'soft': 'var(--shadow-soft)'
 			},
 			transitionTimingFunction: {
 				'smooth': 'var(--transition-smooth)',
