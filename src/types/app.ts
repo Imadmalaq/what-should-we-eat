@@ -21,7 +21,7 @@ export interface Restaurant {
   priceRange: '$' | '$$' | '$$$';
   cuisine: string;
   mapsUrl: string;
-  deliveryUrl?: string;
+  uberEatsUrl?: string;
 }
 
 export interface FoodRecommendation {

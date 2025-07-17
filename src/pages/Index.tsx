@@ -61,6 +61,7 @@ const Index = () => {
         <FoodResult 
           result={foodResult} 
           onRestart={handleRestart}
+          onReturnHome={handleRestart}
         />
       )}
 

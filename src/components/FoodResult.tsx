@@ -3,11 +3,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { FoodRecommendation, Restaurant } from '@/types/app';
-import { MapPin, ExternalLink, Share, Heart, RotateCcw, Navigation } from 'lucide-react';
+import { MapPin, ExternalLink, Share, Heart, RotateCcw, Navigation, Home } from 'lucide-react';
 
 interface FoodResultProps {
   result: FoodRecommendation;
   onRestart: () => void;
+  onReturnHome: () => void;
   userLocation?: string;
 }
 
@@ -20,8 +21,8 @@ const mockRestaurants: { [key: string]: Restaurant[] } = {
       distance: '0.3 miles',
       priceRange: '$$',
       cuisine: 'Italian',
-      mapsUrl: 'https://maps.google.com/?q=italian+restaurant+near+me',
-      deliveryUrl: 'https://ubereats.com'
+      mapsUrl: 'https://maps.google.com/?q=Nonna\'s+Kitchen+restaurant',
+      uberEatsUrl: 'https://ubereats.com'
     },
     {
       id: '2',
@@ -29,7 +30,7 @@ const mockRestaurants: { [key: string]: Restaurant[] } = {
       distance: '0.7 miles',
       priceRange: '$$$',
       cuisine: 'Italian',
-      mapsUrl: 'https://maps.google.com/?q=pasta+restaurant+near+me',
+      mapsUrl: 'https://maps.google.com/?q=Pasta+Palace+restaurant',
     },
     {
       id: '3',
@@ -37,8 +38,7 @@ const mockRestaurants: { [key: string]: Restaurant[] } = {
       distance: '1.2 miles',
       priceRange: '$',
       cuisine: 'Italian',
-      mapsUrl: 'https://maps.google.com/?q=spaghetti+restaurant+near+me',
-      deliveryUrl: 'https://doordash.com'
+      mapsUrl: 'https://maps.google.com/?q=The+Spaghetti+Spot+restaurant',
     }
   ],
   sushi: [
@@ -48,7 +48,8 @@ const mockRestaurants: { [key: string]: Restaurant[] } = {
       distance: '0.4 miles',
       priceRange: '$$$',
       cuisine: 'Japanese',
-      mapsUrl: 'https://maps.google.com/?q=sushi+restaurant+near+me',
+      mapsUrl: 'https://maps.google.com/?q=Zen+Sushi+Bar+restaurant',
+      uberEatsUrl: 'https://ubereats.com'
     },
     {
       id: '5',
@@ -56,8 +57,7 @@ const mockRestaurants: { [key: string]: Restaurant[] } = {
       distance: '0.8 miles',
       priceRange: '$$',
       cuisine: 'Japanese',
-      mapsUrl: 'https://maps.google.com/?q=japanese+restaurant+near+me',
-      deliveryUrl: 'https://grubhub.com'
+      mapsUrl: 'https://maps.google.com/?q=Tokyo+Express+restaurant',
     }
   ],
   pizza: [
@@ -67,8 +67,8 @@ const mockRestaurants: { [key: string]: Restaurant[] } = {
       distance: '0.2 miles',
       priceRange: '$',
       cuisine: 'Italian',
-      mapsUrl: 'https://maps.google.com/?q=pizza+near+me',
-      deliveryUrl: 'https://dominos.com'
+      mapsUrl: 'https://maps.google.com/?q=Tony\'s+Pizza+restaurant',
+      uberEatsUrl: 'https://ubereats.com'
     },
     {
       id: '7',
@@ -76,7 +76,7 @@ const mockRestaurants: { [key: string]: Restaurant[] } = {
       distance: '0.6 miles',
       priceRange: '$$',
       cuisine: 'Italian',
-      mapsUrl: 'https://maps.google.com/?q=artisan+pizza+near+me',
+      mapsUrl: 'https://maps.google.com/?q=Artisan+Pizza+Co+restaurant',
     }
   ],
   tacos: [
@@ -86,8 +86,8 @@ const mockRestaurants: { [key: string]: Restaurant[] } = {
       distance: '0.5 miles',
       priceRange: '$',
       cuisine: 'Mexican',
-      mapsUrl: 'https://maps.google.com/?q=taco+restaurant+near+me',
-      deliveryUrl: 'https://ubereats.com'
+      mapsUrl: 'https://maps.google.com/?q=Taco+Libre+restaurant',
+      uberEatsUrl: 'https://ubereats.com'
     },
     {
       id: '9',
@@ -95,7 +95,7 @@ const mockRestaurants: { [key: string]: Restaurant[] } = {
       distance: '1.0 miles',
       priceRange: '$$',
       cuisine: 'Mexican',
-      mapsUrl: 'https://maps.google.com/?q=mexican+restaurant+near+me',
+      mapsUrl: 'https://maps.google.com/?q=Casa+de+Tacos+restaurant',
     }
   ],
   ramen: [
@@ -105,7 +105,8 @@ const mockRestaurants: { [key: string]: Restaurant[] } = {
       distance: '0.9 miles',
       priceRange: '$$',
       cuisine: 'Japanese',
-      mapsUrl: 'https://maps.google.com/?q=ramen+restaurant+near+me',
+      mapsUrl: 'https://maps.google.com/?q=Ramen+House+restaurant',
+      uberEatsUrl: 'https://ubereats.com'
     },
     {
       id: '11',
@@ -113,8 +114,7 @@ const mockRestaurants: { [key: string]: Restaurant[] } = {
       distance: '1.3 miles',
       priceRange: '$',
       cuisine: 'Asian',
-      mapsUrl: 'https://maps.google.com/?q=noodle+restaurant+near+me',
-      deliveryUrl: 'https://seamless.com'
+      mapsUrl: 'https://maps.google.com/?q=Noodle+Bar+restaurant',
     }
   ],
   burgers: [
@@ -124,8 +124,7 @@ const mockRestaurants: { [key: string]: Restaurant[] } = {
       distance: '0.4 miles',
       priceRange: '$$',
       cuisine: 'American',
-      mapsUrl: 'https://maps.google.com/?q=burger+restaurant+near+me',
-      deliveryUrl: 'https://doordash.com'
+      mapsUrl: 'https://maps.google.com/?q=Burger+Barn+restaurant',
     },
     {
       id: '13',
@@ -133,12 +132,13 @@ const mockRestaurants: { [key: string]: Restaurant[] } = {
       distance: '0.7 miles',
       priceRange: '$',
       cuisine: 'American',
-      mapsUrl: 'https://maps.google.com/?q=burger+joint+near+me',
+      mapsUrl: 'https://maps.google.com/?q=The+Burger+Joint+restaurant',
+      uberEatsUrl: 'https://ubereats.com'
     }
   ]
 };
 
-export function FoodResult({ result, onRestart, userLocation }: FoodResultProps) {
+export function FoodResult({ result, onRestart, onReturnHome, userLocation }: FoodResultProps) {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [isSharing, setIsSharing] = useState(false);
 
@@ -228,14 +228,14 @@ export function FoodResult({ result, onRestart, userLocation }: FoodResultProps)
                           Directions
                         </Button>
                         
-                        {restaurant.deliveryUrl && (
+                        {restaurant.uberEatsUrl && (
                           <Button
                             variant="default"
                             size="sm"
-                            onClick={() => window.open(restaurant.deliveryUrl, '_blank')}
+                            onClick={() => window.open(restaurant.uberEatsUrl, '_blank')}
                           >
                             <ExternalLink className="w-4 h-4 mr-1" />
-                            Order
+                            Uber Eats
                           </Button>
                         )}
                       </div>
@@ -272,6 +272,16 @@ export function FoodResult({ result, onRestart, userLocation }: FoodResultProps)
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
           <Button
+            onClick={onReturnHome}
+            variant="outline"
+            size="lg"
+            className="flex items-center gap-2"
+          >
+            <Home className="w-4 h-4" />
+            Back to Home
+          </Button>
+          
+          <Button
             onClick={handleShare}
             disabled={isSharing}
             variant="outline"
@@ -294,7 +304,7 @@ export function FoodResult({ result, onRestart, userLocation }: FoodResultProps)
             className="flex items-center gap-2 bg-gradient-romantic hover:opacity-90"
           >
             <RotateCcw className="w-4 h-4" />
-            Make Another Decision
+            Try Again
           </Button>
         </div>
 
