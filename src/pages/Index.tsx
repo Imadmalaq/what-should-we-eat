@@ -1,74 +1,46 @@
 import { useState } from 'react';
 import { HeroSection } from '@/components/HeroSection';
-import { SwipeFlow } from '@/components/SwipeFlow';
-import { FoodResult } from '@/components/FoodResult';
-import { LocationPrompt } from '@/components/LocationPrompt';
-import { PaywallModal } from '@/components/PaywallModal';
-import { FoodRecommendation } from '@/types/app';
-import { useUsageTracking } from '@/hooks/useUsageTracking';
+import { QuizFlow } from '@/components/QuizFlow';
+import { ResultPage } from '@/components/ResultPage';
+import { QuizResult } from '@/types/quiz';
 
-type AppState = 'hero' | 'location' | 'swipe' | 'result';
+type AppState = 'hero' | 'quiz' | 'result';
 
 const Index = () => {
   const [appState, setAppState] = useState<AppState>('hero');
-  const [foodResult, setFoodResult] = useState<FoodRecommendation | null>(null);
-  const [showPaywall, setShowPaywall] = useState(false);
-  const [hasLocation, setHasLocation] = useState(false);
-  
-  const { canUse, remainingUses, incrementUsage, isAtLimit } = useUsageTracking();
+  const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
 
-  const handleStartSwipe = () => {
-    if (!canUse && isAtLimit) {
-      setShowPaywall(true);
-      return;
-    }
-    
-    // For MVP, skip location for now
-    setAppState('swipe');
-    incrementUsage();
+  const handleStartQuiz = () => {
+    setAppState('quiz');
   };
 
-  const handleLocationSet = () => {
-    setHasLocation(true);
-    setAppState('swipe');
-  };
-
-  const handleSwipeComplete = (result: FoodRecommendation) => {
-    setFoodResult(result);
+  const handleQuizComplete = (result: QuizResult) => {
+    setQuizResult(result);
     setAppState('result');
   };
 
   const handleRestart = () => {
-    setFoodResult(null);
+    setQuizResult(null);
     setAppState('hero');
   };
 
   return (
     <div className="min-h-screen">
       {appState === 'hero' && (
-        <HeroSection onStartQuiz={handleStartSwipe} />
+        <HeroSection onStartQuiz={handleStartQuiz} />
       )}
       
-      {appState === 'location' && (
-        <LocationPrompt onLocationSet={handleLocationSet} />
+      {appState === 'quiz' && (
+        <div className="min-h-screen bg-gradient-warm py-12">
+          <QuizFlow onComplete={handleQuizComplete} />
+        </div>
       )}
       
-      {appState === 'swipe' && (
-        <SwipeFlow onComplete={handleSwipeComplete} />
+      {appState === 'result' && quizResult && (
+        <div className="min-h-screen bg-gradient-warm py-12">
+          <ResultPage result={quizResult} onRestart={handleRestart} />
+        </div>
       )}
-      
-      {appState === 'result' && foodResult && (
-        <FoodResult 
-          result={foodResult} 
-          onRestart={handleRestart}
-        />
-      )}
-
-      <PaywallModal
-        isOpen={showPaywall}
-        onClose={() => setShowPaywall(false)}
-        remainingUses={remainingUses}
-      />
     </div>
   );
 };
