@@ -23,9 +23,20 @@ const Index = () => {
       return;
     }
     
-    // For MVP, skip location for now
-    setAppState('swipe');
-    incrementUsage();
+    // Check if we need location first
+    navigator.geolocation.getCurrentPosition(
+      () => {
+        // Location permission granted, proceed
+        setAppState('swipe');
+        incrementUsage();
+      },
+      () => {
+        // Location denied or unavailable, show location prompt
+        setAppState('location');
+        incrementUsage();
+      },
+      { timeout: 5000 }
+    );
   };
 
   const handleLocationSet = () => {

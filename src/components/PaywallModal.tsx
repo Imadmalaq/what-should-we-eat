@@ -57,7 +57,7 @@ export function PaywallModal({ isOpen, onClose, remainingUses }: PaywallModalPro
           {/* Pricing */}
           <div className="text-center p-6 bg-gradient-to-br from-primary/5 to-primary/10 rounded-lg border border-primary/20">
             <div className="flex items-center justify-center gap-2 mb-2">
-              <span className="text-3xl font-bold">$9.99</span>
+              <span className="text-3xl font-bold">$4.99</span>
               <span className="text-muted-foreground">/month</span>
               <Badge variant="secondary" className="bg-primary/10 text-primary">
                 Popular

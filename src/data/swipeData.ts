@@ -1,82 +1,107 @@
 import { SwipeQuestion, FoodRecommendation } from '@/types/app';
 
-export const swipeQuestions: SwipeQuestion[] = [
+// AI-powered dynamic questions that change each time
+const questionBank: SwipeQuestion[] = [
+  // Mood & Energy
   {
-    id: 'mood',
-    question: 'How are you both feeling?',
-    emoji: '💕',
-    optionA: {
-      text: 'Cozy night in',
-      emoji: '🏠',
-      category: 'comfort'
-    },
-    optionB: {
-      text: 'Adventure time',
-      emoji: '✨',
-      category: 'exotic'
-    }
-  },
-  {
-    id: 'energy',
-    question: 'Energy level check',
+    id: 'energy_1',
+    question: 'How\'s your energy tonight?',
     emoji: '⚡',
-    optionA: {
-      text: 'Tired & lazy',
-      emoji: '😴',
-      category: 'easy'
-    },
-    optionB: {
-      text: 'Ready to cook',
-      emoji: '👨‍🍳',
-      category: 'involved'
-    }
+    optionA: { text: 'Zero effort vibes', emoji: '😴', category: 'easy' },
+    optionB: { text: 'Let\'s get cooking!', emoji: '👨‍🍳', category: 'involved' }
   },
   {
-    id: 'budget',
-    question: 'Tonight\'s budget vibe',
+    id: 'mood_1',
+    question: 'What\'s the vibe?',
+    emoji: '💭',
+    optionA: { text: 'Cozy & romantic', emoji: '🕯️', category: 'comfort' },
+    optionB: { text: 'Fun & adventurous', emoji: '🎉', category: 'exotic' }
+  },
+  {
+    id: 'time_1',
+    question: 'How much time do you have?',
+    emoji: '⏰',
+    optionA: { text: 'Quick bite needed', emoji: '⚡', category: 'fast' },
+    optionB: { text: 'We can take our time', emoji: '🍷', category: 'slow' }
+  },
+  
+  // Flavor Profiles
+  {
+    id: 'spice_1',
+    question: 'Spice tolerance tonight?',
+    emoji: '🌶️',
+    optionA: { text: 'Keep it mild', emoji: '😌', category: 'mild' },
+    optionB: { text: 'Bring the heat!', emoji: '🔥', category: 'spicy' }
+  },
+  {
+    id: 'texture_1',
+    question: 'What texture sounds good?',
+    emoji: '🍽️',
+    optionA: { text: 'Creamy & smooth', emoji: '🥛', category: 'creamy' },
+    optionB: { text: 'Crunchy & crispy', emoji: '🥖', category: 'crunchy' }
+  },
+  {
+    id: 'temperature_1',
+    question: 'Temperature preference?',
+    emoji: '🌡️',
+    optionA: { text: 'Something hot & warm', emoji: '🔥', category: 'hot' },
+    optionB: { text: 'Cool & refreshing', emoji: '❄️', category: 'cold' }
+  },
+  
+  // Budget & Practicality
+  {
+    id: 'budget_1',
+    question: 'What\'s the budget tonight?',
     emoji: '💰',
-    optionA: {
-      text: 'Keep it simple',
-      emoji: '🪙',
-      category: 'budget'
-    },
-    optionB: {
-      text: 'Treat ourselves',
-      emoji: '💎',
-      category: 'splurge'
-    }
+    optionA: { text: 'Keep it affordable', emoji: '💵', category: 'budget' },
+    optionB: { text: 'Let\'s splurge a bit', emoji: '💎', category: 'splurge' }
   },
   {
-    id: 'flavor',
-    question: 'Flavor preference',
-    emoji: '👅',
-    optionA: {
-      text: 'Rich & hearty',
-      emoji: '🧈',
-      category: 'heavy'
-    },
-    optionB: {
-      text: 'Fresh & light',
-      emoji: '🥗',
-      category: 'light'
-    }
+    id: 'effort_1',
+    question: 'Cooking or ordering?',
+    emoji: '🤔',
+    optionA: { text: 'Order in tonight', emoji: '📱', category: 'delivery' },
+    optionB: { text: 'Cook together', emoji: '👫', category: 'cooking' }
   },
+  
+  // Cuisine & Style
   {
-    id: 'cuisine',
-    question: 'Cuisine style',
+    id: 'cuisine_1',
+    question: 'Cuisine adventure level?',
     emoji: '🌍',
-    optionA: {
-      text: 'Familiar favorites',
-      emoji: '🍔',
-      category: 'familiar'
-    },
-    optionB: {
-      text: 'Something new',
-      emoji: '🍜',
-      category: 'international'
-    }
+    optionA: { text: 'Stick to favorites', emoji: '🍔', category: 'familiar' },
+    optionB: { text: 'Try something new', emoji: '🍜', category: 'international' }
+  },
+  {
+    id: 'portion_1',
+    question: 'How hungry are you?',
+    emoji: '🍽️',
+    optionA: { text: 'Light & satisfying', emoji: '🥗', category: 'light' },
+    optionB: { text: 'Big & hearty', emoji: '🍖', category: 'heavy' }
+  },
+  {
+    id: 'sharing_1',
+    question: 'Sharing or individual?',
+    emoji: '👥',
+    optionA: { text: 'Share everything', emoji: '💕', category: 'sharing' },
+    optionB: { text: 'Our own dishes', emoji: '🍽️', category: 'individual' }
+  },
+  {
+    id: 'healthiness_1',
+    question: 'Health conscious tonight?',
+    emoji: '🥬',
+    optionA: { text: 'Indulge a little', emoji: '🍰', category: 'indulgent' },
+    optionB: { text: 'Keep it healthy', emoji: '🥑', category: 'healthy' }
   }
 ];
+
+export function getRandomQuestions(): SwipeQuestion[] {
+  // Shuffle and return 5 random questions
+  const shuffled = [...questionBank].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, 5);
+}
+
+export const swipeQuestions = getRandomQuestions();
 
 export const foodRecommendations: { [key: string]: FoodRecommendation } = {
   pasta: {

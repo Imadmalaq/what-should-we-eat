@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { SwipeCard } from '@/components/SwipeCard';
 import { Progress } from '@/components/ui/progress';
-import { swipeQuestions, calculateFoodRecommendation } from '@/data/swipeData';
-import { FoodRecommendation } from '@/types/app';
+import { getRandomQuestions, calculateFoodRecommendation } from '@/data/swipeData';
+import { FoodRecommendation, SwipeQuestion } from '@/types/app';
 import { Heart, X, ArrowLeft, ArrowRight } from 'lucide-react';
 
 interface SwipeFlowProps {
@@ -13,10 +13,22 @@ interface SwipeFlowProps {
 export function SwipeFlow({ onComplete }: SwipeFlowProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<{ [key: string]: string }>({});
+  const [questions, setQuestions] = useState<SwipeQuestion[]>([]);
 
-  const question = swipeQuestions[currentQuestion];
-  const progress = ((currentQuestion + 1) / swipeQuestions.length) * 100;
-  const isLastQuestion = currentQuestion === swipeQuestions.length - 1;
+  // Generate fresh random questions on component mount
+  useEffect(() => {
+    setQuestions(getRandomQuestions());
+  }, []);
+
+  if (questions.length === 0) {
+    return <div className="min-h-screen bg-gradient-warm flex items-center justify-center">
+      <div className="text-center">Loading questions...</div>
+    </div>;
+  }
+
+  const question = questions[currentQuestion];
+  const progress = ((currentQuestion + 1) / questions.length) * 100;
+  const isLastQuestion = currentQuestion === questions.length - 1;
 
   const handleSwipeLeft = () => {
     handleAnswer(question.optionA.category);
@@ -49,7 +61,7 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
         {/* Progress */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm text-muted-foreground">
-            <span>Question {currentQuestion + 1} of {swipeQuestions.length}</span>
+            <span>Question {currentQuestion + 1} of {questions.length}</span>
             <span>{Math.round(progress)}% complete</span>
           </div>
           <Progress value={progress} className="h-2" />
