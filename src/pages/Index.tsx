@@ -4,7 +4,7 @@ import { SwipeFlow } from '@/components/SwipeFlow';
 import { FoodResult } from '@/components/FoodResult';
 import { LocationPrompt } from '@/components/LocationPrompt';
 import { PaywallModal } from '@/components/PaywallModal';
-import { FoodRecommendation } from '@/types/app';
+import { FoodRecommendation, RestaurantRecommendation } from '@/types/app';
 import { useUsageTracking } from '@/hooks/useUsageTracking';
 
 type AppState = 'hero' | 'location' | 'swipe' | 'result';

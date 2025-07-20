@@ -3,12 +3,14 @@ import { Button } from '@/components/ui/button';
 import { SwipeCard } from '@/components/SwipeCard';
 import { Progress } from '@/components/ui/progress';
 import { foodRecommendations } from '@/data/swipeData';
-import { FoodRecommendation, SwipeQuestion } from '@/types/app';
-import { AIQuestionService, calculateAdvancedRecommendation } from '@/services/aiService';
+import { FoodRecommendation, SwipeQuestion, RestaurantRecommendation } from '@/types/app';
+import { EnhancedAIQuestionService, calculateEnhancedRecommendation } from '@/services/enhancedAiService';
+import { RestaurantService } from '@/services/restaurantService';
+import { useLocation } from '@/hooks/useLocation';
 import { Heart, X, ArrowLeft, ArrowRight } from 'lucide-react';
 
 interface SwipeFlowProps {
-  onComplete: (result: FoodRecommendation) => void;
+  onComplete: (result: FoodRecommendation, restaurant?: RestaurantRecommendation) => void;
 }
 
 export function SwipeFlow({ onComplete }: SwipeFlowProps) {
@@ -17,8 +19,10 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
   const [questions, setQuestions] = useState<SwipeQuestion[]>([]);
   const [isGeneratingQuestion, setIsGeneratingQuestion] = useState(false);
   
-  const aiService = AIQuestionService.getInstance();
-  const totalQuestions = 5;
+  const aiService = EnhancedAIQuestionService.getInstance();
+  const restaurantService = RestaurantService.getInstance();
+  const { location } = useLocation();
+  const totalQuestions = 10;
 
   // Generate first question on mount
   useEffect(() => {
@@ -33,10 +37,10 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
         // Fallback to a default question
         setQuestions([{
           id: 'fallback_1',
-          question: "What's your energy level right now?",
-          emoji: "⚡",
-          optionA: { text: "Low energy, keep it simple", emoji: "😴", category: "comfort" },
-          optionB: { text: "Ready for an adventure", emoji: "🚀", category: "adventurous" }
+          question: "What's your current mood?",
+          emoji: "😊",
+          optionA: { text: "Relaxed and cozy", emoji: "😌", category: "comfort" },
+          optionB: { text: "Energetic and bold", emoji: "⚡", category: "adventurous" }
         }]);
       }
       setIsGeneratingQuestion(false);
@@ -74,10 +78,25 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
     setAnswers(newAnswers);
 
     if (isLastQuestion) {
-      // Calculate final recommendation using advanced algorithm
-      const foodType = calculateAdvancedRecommendation(newAnswers);
+      // Calculate final recommendation using enhanced algorithm
+      const foodType = calculateEnhancedRecommendation(newAnswers);
       const result = foodRecommendations[foodType] || foodRecommendations.surprise;
-      onComplete(result);
+      
+      // Get specific restaurant recommendation
+      try {
+        const restaurant = await restaurantService.findSpecificRestaurant(
+          foodType,
+          location || { latitude: 46.2044, longitude: 6.1432 }, // Default to Geneva center
+          {
+            priceLevel: newAnswers.budget ? 1 : newAnswers.splurge ? 3 : 2,
+            transportMode: 'walking'
+          }
+        );
+        onComplete(result, restaurant || undefined);
+      } catch (error) {
+        console.error('Error finding restaurant:', error);
+        onComplete(result);
+      }
     } else {
       // Generate next question based on current answers
       setIsGeneratingQuestion(true);

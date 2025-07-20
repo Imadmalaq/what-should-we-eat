@@ -9,7 +9,7 @@ interface ResultPageProps {
   onRestart: () => void;
 }
 
-export function ResultPage({ result, onRestart }: ResultPageProps) {
+export function ResultPage({ result, restaurant, onRestart }: ResultPageProps) {
   const handleShare = () => {
     const shareText = `I just discovered I should eat: ${result.title} 🍽️\n\nTry the "What Should I Eat?" quiz to find your perfect meal!`;
     

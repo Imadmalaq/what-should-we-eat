@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { UsageData } from '@/types/app';
 
 const STORAGE_KEY = 'whatShouldWeEat_usage';
-const FREE_USAGE_LIMIT = 5;
+const FREE_USAGE_LIMIT = 3;
 
 export function useUsageTracking() {
   const [usageData, setUsageData] = useState<UsageData>({ count: 0, lastUsed: '' });
