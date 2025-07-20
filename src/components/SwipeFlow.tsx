@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { SwipeCard } from '@/components/SwipeCard';
 import { Progress } from '@/components/ui/progress';
-import { getRandomQuestions, calculateFoodRecommendation } from '@/data/swipeData';
+import { foodRecommendations } from '@/data/swipeData';
 import { FoodRecommendation, SwipeQuestion } from '@/types/app';
+import { AIQuestionService, calculateAdvancedRecommendation } from '@/services/aiService';
 import { Heart, X, ArrowLeft, ArrowRight } from 'lucide-react';
 
 interface SwipeFlowProps {
@@ -14,21 +15,48 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<{ [key: string]: string }>({});
   const [questions, setQuestions] = useState<SwipeQuestion[]>([]);
+  const [isGeneratingQuestion, setIsGeneratingQuestion] = useState(false);
+  
+  const aiService = AIQuestionService.getInstance();
+  const totalQuestions = 5;
 
-  // Generate fresh random questions on component mount
+  // Generate first question on mount
   useEffect(() => {
-    setQuestions(getRandomQuestions());
+    const initializeQuiz = async () => {
+      aiService.resetSession(); // Reset for new session
+      setIsGeneratingQuestion(true);
+      try {
+        const firstQuestion = await aiService.generateNextQuestion({}, 0);
+        setQuestions([firstQuestion]);
+      } catch (error) {
+        console.error('Error generating first question:', error);
+        // Fallback to a default question
+        setQuestions([{
+          id: 'fallback_1',
+          question: "What's your energy level right now?",
+          emoji: "⚡",
+          optionA: { text: "Low energy, keep it simple", emoji: "😴", category: "comfort" },
+          optionB: { text: "Ready for an adventure", emoji: "🚀", category: "adventurous" }
+        }]);
+      }
+      setIsGeneratingQuestion(false);
+    };
+    
+    initializeQuiz();
   }, []);
 
-  if (questions.length === 0) {
+  if (questions.length === 0 || isGeneratingQuestion) {
     return <div className="min-h-screen bg-gradient-warm flex items-center justify-center">
-      <div className="text-center">Loading questions...</div>
+      <div className="text-center">
+        <div className="text-4xl mb-4">🤔</div>
+        <div>Generating your personalized questions...</div>
+      </div>
     </div>;
   }
 
   const question = questions[currentQuestion];
-  const progress = ((currentQuestion + 1) / questions.length) * 100;
-  const isLastQuestion = currentQuestion === questions.length - 1;
+  const progress = ((currentQuestion + 1) / totalQuestions) * 100;
+  const isLastQuestion = currentQuestion >= totalQuestions - 1;
 
   const handleSwipeLeft = () => {
     handleAnswer(question.optionA.category);
@@ -38,7 +66,7 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
     handleAnswer(question.optionB.category);
   };
 
-  const handleAnswer = (category: string) => {
+  const handleAnswer = async (category: string) => {
     const newAnswers = {
       ...answers,
       [question.id]: category
@@ -46,12 +74,26 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
     setAnswers(newAnswers);
 
     if (isLastQuestion) {
-      const result = calculateFoodRecommendation(newAnswers);
+      // Calculate final recommendation using advanced algorithm
+      const foodType = calculateAdvancedRecommendation(newAnswers);
+      const result = foodRecommendations[foodType] || foodRecommendations.surprise;
       onComplete(result);
     } else {
-      setTimeout(() => {
+      // Generate next question based on current answers
+      setIsGeneratingQuestion(true);
+      try {
+        const nextQuestion = await aiService.generateNextQuestion(newAnswers, currentQuestion + 1);
+        setQuestions(prev => [...prev, nextQuestion]);
+        setTimeout(() => {
+          setCurrentQuestion(prev => prev + 1);
+          setIsGeneratingQuestion(false);
+        }, 200);
+      } catch (error) {
+        console.error('Error generating next question:', error);
+        setIsGeneratingQuestion(false);
+        // Fallback - just move to next with a generic question
         setCurrentQuestion(prev => prev + 1);
-      }, 200);
+      }
     }
   };
 
@@ -61,7 +103,7 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
         {/* Progress */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm text-muted-foreground">
-            <span>Question {currentQuestion + 1} of {questions.length}</span>
+            <span>Question {currentQuestion + 1} of {totalQuestions}</span>
             <span>{Math.round(progress)}% complete</span>
           </div>
           <Progress value={progress} className="h-2" />

@@ -107,7 +107,7 @@ export const foodRecommendations: { [key: string]: FoodRecommendation } = {
   pasta: {
     category: 'pasta',
     title: 'Cozy Pasta Night! 🍝',
-    description: 'Perfect for a romantic evening in with something warm and comforting.',
+    description: 'Perfect for a romantic evening with something warm and comforting.',
     emoji: '🍝',
     restaurants: []
   },
@@ -144,6 +144,90 @@ export const foodRecommendations: { [key: string]: FoodRecommendation } = {
     title: 'Burger Date! 🍔',
     description: 'Classic, satisfying, and always hits the spot.',
     emoji: '🍔',
+    restaurants: []
+  },
+  thai: {
+    category: 'thai',
+    title: 'Spicy Thai Adventure! 🍛',
+    description: 'Bold flavors and aromatic spices for the adventurous couple.',
+    emoji: '🍛',
+    restaurants: []
+  },
+  indian: {
+    category: 'indian',
+    title: 'Indian Curry Night! 🍛',
+    description: 'Rich, spicy, and incredibly satisfying comfort food.',
+    emoji: '🍛',
+    restaurants: []
+  },
+  mexican: {
+    category: 'mexican',
+    title: 'Mexican Fiesta! 🌮',
+    description: 'Vibrant flavors and festive atmosphere for a fun night.',
+    emoji: '🌮',
+    restaurants: []
+  },
+  chinese: {
+    category: 'chinese',
+    title: 'Chinese Takeout Night! 🥡',
+    description: 'Classic comfort food that never disappoints.',
+    emoji: '🥡',
+    restaurants: []
+  },
+  korean: {
+    category: 'korean',
+    title: 'Korean BBQ Date! 🥢',
+    description: 'Interactive dining with amazing flavors to share.',
+    emoji: '🥢',
+    restaurants: []
+  },
+  mediterranean: {
+    category: 'mediterranean',
+    title: 'Mediterranean Feast! 🫒',
+    description: 'Fresh, healthy, and incredibly flavorful dishes.',
+    emoji: '🫒',
+    restaurants: []
+  },
+  greek: {
+    category: 'greek',
+    title: 'Greek Night! 🏛️',
+    description: 'Fresh ingredients and bold Mediterranean flavors.',
+    emoji: '🏛️',
+    restaurants: []
+  },
+  italian: {
+    category: 'italian',
+    title: 'Italian Romance! 🇮🇹',
+    description: 'Classic Italian comfort food for a romantic evening.',
+    emoji: '🇮🇹',
+    restaurants: []
+  },
+  vietnamese: {
+    category: 'vietnamese',
+    title: 'Vietnamese Pho Night! 🍜',
+    description: 'Light, fresh, and incredibly satisfying Asian comfort.',
+    emoji: '🍜',
+    restaurants: []
+  },
+  poke: {
+    category: 'poke',
+    title: 'Fresh Poke Bowl! 🐟',
+    description: 'Healthy, fresh, and customizable Hawaiian goodness.',
+    emoji: '🐟',
+    restaurants: []
+  },
+  turkish: {
+    category: 'turkish',
+    title: 'Turkish Delight! 🧿',
+    description: 'Rich, flavorful dishes from the crossroads of cultures.',
+    emoji: '🧿',
+    restaurants: []
+  },
+  surprise: {
+    category: 'surprise',
+    title: 'Surprise Me! 🎲',
+    description: 'Let\'s try something completely unexpected tonight!',
+    emoji: '🎲',
     restaurants: []
   }
 };
