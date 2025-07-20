@@ -12,6 +12,7 @@ type AppState = 'hero' | 'location' | 'swipe' | 'result';
 const Index = () => {
   const [appState, setAppState] = useState<AppState>('hero');
   const [foodResult, setFoodResult] = useState<FoodRecommendation | null>(null);
+  const [restaurant, setRestaurant] = useState<RestaurantRecommendation | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [hasLocation, setHasLocation] = useState(false);
   
@@ -44,13 +45,15 @@ const Index = () => {
     setAppState('swipe');
   };
 
-  const handleSwipeComplete = (result: FoodRecommendation) => {
+  const handleSwipeComplete = (result: FoodRecommendation, restaurantResult?: RestaurantRecommendation) => {
     setFoodResult(result);
+    setRestaurant(restaurantResult || null);
     setAppState('result');
   };
 
   const handleRestart = () => {
     setFoodResult(null);
+    setRestaurant(null);
     setAppState('hero');
   };
 
@@ -71,8 +74,8 @@ const Index = () => {
       {appState === 'result' && foodResult && (
         <FoodResult 
           result={foodResult} 
+          restaurant={restaurant}
           onRestart={handleRestart}
-          onReturnHome={handleRestart}
         />
       )}
 

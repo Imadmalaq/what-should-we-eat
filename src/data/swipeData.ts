@@ -1,102 +1,115 @@
 import { SwipeQuestion, FoodRecommendation } from '@/types/app';
 
-// AI-powered dynamic questions that change each time
 const questionBank: SwipeQuestion[] = [
-  // Mood & Energy
   {
-    id: 'energy_1',
-    question: 'How\'s your energy tonight?',
-    emoji: '⚡',
-    optionA: { text: 'Zero effort vibes', emoji: '😴', category: 'easy' },
-    optionB: { text: 'Let\'s get cooking!', emoji: '👨‍🍳', category: 'involved' }
+    id: 'q1',
+    question: "What's your current mood?",
+    emoji: "😊",
+    optionA: { text: "Comfort and cozy", emoji: "😌", category: "comfort" },
+    optionB: { text: "Adventure and excitement", emoji: "🚀", category: "adventurous" }
   },
   {
-    id: 'mood_1',
-    question: 'What\'s the vibe?',
-    emoji: '💭',
-    optionA: { text: 'Cozy & romantic', emoji: '🕯️', category: 'comfort' },
-    optionB: { text: 'Fun & adventurous', emoji: '🎉', category: 'exotic' }
+    id: 'q2',
+    question: "How hungry are you?",
+    emoji: "🍽️",
+    optionA: { text: "Light appetite", emoji: "🥗", category: "light" },
+    optionB: { text: "Really hungry", emoji: "🍖", category: "hearty" }
   },
   {
-    id: 'time_1',
-    question: 'How much time do you have?',
-    emoji: '⏰',
-    optionA: { text: 'Quick bite needed', emoji: '⚡', category: 'fast' },
-    optionB: { text: 'We can take our time', emoji: '🍷', category: 'slow' }
-  },
-  
-  // Flavor Profiles
-  {
-    id: 'spice_1',
-    question: 'Spice tolerance tonight?',
-    emoji: '🌶️',
-    optionA: { text: 'Keep it mild', emoji: '😌', category: 'mild' },
-    optionB: { text: 'Bring the heat!', emoji: '🔥', category: 'spicy' }
+    id: 'q3',
+    question: "What's your spice tolerance?",
+    emoji: "🌶️",
+    optionA: { text: "Mild and gentle", emoji: "😌", category: "mild" },
+    optionB: { text: "Bring the heat!", emoji: "🔥", category: "spicy" }
   },
   {
-    id: 'texture_1',
-    question: 'What texture sounds good?',
-    emoji: '🍽️',
-    optionA: { text: 'Creamy & smooth', emoji: '🥛', category: 'creamy' },
-    optionB: { text: 'Crunchy & crispy', emoji: '🥖', category: 'crunchy' }
+    id: 'q4',
+    question: "Preferred cuisine style?",
+    emoji: "🌍",
+    optionA: { text: "Familiar favorites", emoji: "🏠", category: "familiar" },
+    optionB: { text: "International flavors", emoji: "✈️", category: "international" }
   },
   {
-    id: 'temperature_1',
-    question: 'Temperature preference?',
-    emoji: '🌡️',
-    optionA: { text: 'Something hot & warm', emoji: '🔥', category: 'hot' },
-    optionB: { text: 'Cool & refreshing', emoji: '❄️', category: 'cold' }
-  },
-  
-  // Budget & Practicality
-  {
-    id: 'budget_1',
-    question: 'What\'s the budget tonight?',
-    emoji: '💰',
-    optionA: { text: 'Keep it affordable', emoji: '💵', category: 'budget' },
-    optionB: { text: 'Let\'s splurge a bit', emoji: '💎', category: 'splurge' }
+    id: 'q5',
+    question: "How much time do you have?",
+    emoji: "⏰",
+    optionA: { text: "Quick and easy", emoji: "⚡", category: "quick" },
+    optionB: { text: "Take our time", emoji: "🍷", category: "leisurely" }
   },
   {
-    id: 'effort_1',
-    question: 'Cooking or ordering?',
-    emoji: '🤔',
-    optionA: { text: 'Order in tonight', emoji: '📱', category: 'delivery' },
-    optionB: { text: 'Cook together', emoji: '👫', category: 'cooking' }
-  },
-  
-  // Cuisine & Style
-  {
-    id: 'cuisine_1',
-    question: 'Cuisine adventure level?',
-    emoji: '🌍',
-    optionA: { text: 'Stick to favorites', emoji: '🍔', category: 'familiar' },
-    optionB: { text: 'Try something new', emoji: '🍜', category: 'international' }
+    id: 'q6',
+    question: "What's your budget like?",
+    emoji: "💰",
+    optionA: { text: "Budget-friendly", emoji: "💵", category: "budget" },
+    optionB: { text: "Treat ourselves", emoji: "💎", category: "splurge" }
   },
   {
-    id: 'portion_1',
-    question: 'How hungry are you?',
-    emoji: '🍽️',
-    optionA: { text: 'Light & satisfying', emoji: '🥗', category: 'light' },
-    optionB: { text: 'Big & hearty', emoji: '🍖', category: 'heavy' }
+    id: 'q7',
+    question: "Protein preference?",
+    emoji: "🥩",
+    optionA: { text: "Plant-based", emoji: "🌱", category: "vegetarian" },
+    optionB: { text: "Meat lovers", emoji: "🥩", category: "meat" }
   },
   {
-    id: 'sharing_1',
-    question: 'Sharing or individual?',
-    emoji: '👥',
-    optionA: { text: 'Share everything', emoji: '💕', category: 'sharing' },
-    optionB: { text: 'Our own dishes', emoji: '🍽️', category: 'individual' }
+    id: 'q8',
+    question: "Dining style preference?",
+    emoji: "🍽️",
+    optionA: { text: "Share everything", emoji: "💕", category: "sharing" },
+    optionB: { text: "Individual plates", emoji: "🍽️", category: "individual" }
   },
   {
-    id: 'healthiness_1',
-    question: 'Health conscious tonight?',
-    emoji: '🥬',
-    optionA: { text: 'Indulge a little', emoji: '🍰', category: 'indulgent' },
-    optionB: { text: 'Keep it healthy', emoji: '🥑', category: 'healthy' }
+    id: 'q9',
+    question: "Temperature preference?",
+    emoji: "🌡️",
+    optionA: { text: "Hot and warm", emoji: "☕", category: "hot" },
+    optionB: { text: "Cool and fresh", emoji: "🧊", category: "cold" }
+  },
+  {
+    id: 'q10',
+    question: "What's your energy level?",
+    emoji: "⚡",
+    optionA: { text: "Low energy, simple", emoji: "😴", category: "easy" },
+    optionB: { text: "High energy, special", emoji: "🎉", category: "special" }
+  },
+  {
+    id: 'q11',
+    question: "Texture preference?",
+    emoji: "👅",
+    optionA: { text: "Smooth and creamy", emoji: "🥛", category: "creamy" },
+    optionB: { text: "Crispy and crunchy", emoji: "🥖", category: "crunchy" }
+  },
+  {
+    id: 'q12',
+    question: "Health consciousness?",
+    emoji: "🥗",
+    optionA: { text: "Indulge tonight", emoji: "🍰", category: "indulgent" },
+    optionB: { text: "Keep it healthy", emoji: "🥑", category: "healthy" }
+  },
+  {
+    id: 'q13',
+    question: "Social dining preference?",
+    emoji: "👥",
+    optionA: { text: "Intimate for two", emoji: "💑", category: "intimate" },
+    optionB: { text: "Lively atmosphere", emoji: "🎊", category: "social" }
+  },
+  {
+    id: 'q14',
+    question: "Cultural exploration?",
+    emoji: "🗺️",
+    optionA: { text: "Stay local", emoji: "🏡", category: "local" },
+    optionB: { text: "Try global cuisine", emoji: "🌐", category: "global" }
+  },
+  {
+    id: 'q15',
+    question: "Meal complexity?",
+    emoji: "👨‍🍳",
+    optionA: { text: "Simple preparation", emoji: "🍞", category: "simple" },
+    optionB: { text: "Gourmet experience", emoji: "🍾", category: "gourmet" }
   }
 ];
 
-export function getRandomQuestions(): SwipeQuestion[] {
-  // Shuffle and return 5 random questions
+// Function to get random questions for each session
+function getRandomQuestions(): SwipeQuestion[] {
   const shuffled = [...questionBank].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, 5);
 }
@@ -105,155 +118,129 @@ export const swipeQuestions = getRandomQuestions();
 
 export const foodRecommendations: { [key: string]: FoodRecommendation } = {
   pasta: {
-    category: 'pasta',
+    type: 'pasta',
     title: 'Cozy Pasta Night! 🍝',
     description: 'Perfect for a romantic evening with something warm and comforting.',
     emoji: '🍝',
-    restaurants: []
+    suggestions: ['Romantic dinner', 'Comfort food cravings', 'Sharing a meal']
   },
   sushi: {
-    category: 'sushi',
+    type: 'sushi',
     title: 'Fresh Sushi Date! 🍣',
     description: 'Light, fresh, and perfect for sharing together.',
     emoji: '🍣',
-    restaurants: []
+    suggestions: ['Light dinner', 'Fresh flavors', 'Special occasion']
   },
   pizza: {
-    category: 'pizza',
-    title: 'Pizza & Chill! 🍕',
-    description: 'Easy, delicious, and always a crowd pleaser.',
+    type: 'pizza',
+    title: 'Pizza Party! 🍕',
+    description: 'Easy, shareable, and always a crowd-pleaser.',
     emoji: '🍕',
-    restaurants: []
-  },
-  tacos: {
-    category: 'tacos',
-    title: 'Taco Tuesday! 🌮',
-    description: 'Fun, flavorful, and perfect for a casual date night.',
-    emoji: '🌮',
-    restaurants: []
-  },
-  ramen: {
-    category: 'ramen',
-    title: 'Cozy Ramen Night! 🍜',
-    description: 'Warm, comforting, and soul-satisfying.',
-    emoji: '🍜',
-    restaurants: []
-  },
-  burgers: {
-    category: 'burgers',
-    title: 'Burger Date! 🍔',
-    description: 'Classic, satisfying, and always hits the spot.',
-    emoji: '🍔',
-    restaurants: []
+    suggestions: ['Casual dinner', 'Sharing food', 'Comfort cravings']
   },
   thai: {
-    category: 'thai',
-    title: 'Spicy Thai Adventure! 🍛',
-    description: 'Bold flavors and aromatic spices for the adventurous couple.',
-    emoji: '🍛',
-    restaurants: []
+    type: 'thai',
+    title: 'Spicy Thai Adventure! 🌶️',
+    description: 'Bold flavors and aromatic spices to awaken your senses.',
+    emoji: '🌶️',
+    suggestions: ['Spicy food', 'Fresh flavors', 'Adventure dining']
   },
   indian: {
-    category: 'indian',
-    title: 'Indian Curry Night! 🍛',
-    description: 'Rich, spicy, and incredibly satisfying comfort food.',
+    type: 'indian',
+    title: 'Indian Feast! 🍛',
+    description: 'Rich, flavorful curries and warm naan bread.',
     emoji: '🍛',
-    restaurants: []
+    suggestions: ['Rich flavors', 'Warming spices', 'Hearty meal']
   },
   mexican: {
-    category: 'mexican',
+    type: 'mexican',
     title: 'Mexican Fiesta! 🌮',
-    description: 'Vibrant flavors and festive atmosphere for a fun night.',
+    description: 'Vibrant flavors and fresh ingredients for a festive meal.',
     emoji: '🌮',
-    restaurants: []
+    suggestions: ['Festive mood', 'Fresh ingredients', 'Spicy kick']
   },
   chinese: {
-    category: 'chinese',
-    title: 'Chinese Takeout Night! 🥡',
-    description: 'Classic comfort food that never disappoints.',
+    type: 'chinese',
+    title: 'Chinese Takeout! 🥡',
+    description: 'Comfort food with a variety of flavors and textures.',
     emoji: '🥡',
-    restaurants: []
+    suggestions: ['Comfort food', 'Variety', 'Quick dining']
   },
   korean: {
-    category: 'korean',
-    title: 'Korean BBQ Date! 🥢',
-    description: 'Interactive dining with amazing flavors to share.',
-    emoji: '🥢',
-    restaurants: []
-  },
-  mediterranean: {
-    category: 'mediterranean',
-    title: 'Mediterranean Feast! 🫒',
-    description: 'Fresh, healthy, and incredibly flavorful dishes.',
-    emoji: '🫒',
-    restaurants: []
-  },
-  greek: {
-    category: 'greek',
-    title: 'Greek Night! 🏛️',
-    description: 'Fresh ingredients and bold Mediterranean flavors.',
-    emoji: '🏛️',
-    restaurants: []
-  },
-  italian: {
-    category: 'italian',
-    title: 'Italian Romance! 🇮🇹',
-    description: 'Classic Italian comfort food for a romantic evening.',
-    emoji: '🇮🇹',
-    restaurants: []
+    type: 'korean',
+    title: 'Korean BBQ Night! 🥩',
+    description: 'Interactive dining with grilled meats and kimchi.',
+    emoji: '🥩',
+    suggestions: ['Interactive dining', 'Grilled food', 'Bold flavors']
   },
   vietnamese: {
-    category: 'vietnamese',
-    title: 'Vietnamese Pho Night! 🍜',
-    description: 'Light, fresh, and incredibly satisfying Asian comfort.',
+    type: 'vietnamese',
+    title: 'Vietnamese Pho! 🍜',
+    description: 'Light, flavorful broth with fresh herbs and noodles.',
     emoji: '🍜',
-    restaurants: []
+    suggestions: ['Light meal', 'Fresh herbs', 'Comforting broth']
   },
   poke: {
-    category: 'poke',
+    type: 'poke',
     title: 'Fresh Poke Bowl! 🐟',
-    description: 'Healthy, fresh, and customizable Hawaiian goodness.',
+    description: 'Healthy, customizable bowls with fresh fish and vegetables.',
     emoji: '🐟',
-    restaurants: []
+    suggestions: ['Healthy choice', 'Fresh ingredients', 'Customizable']
+  },
+  mediterranean: {
+    type: 'mediterranean',
+    title: 'Mediterranean Mezze! 🫒',
+    description: 'Fresh, healthy options with olive oil and herbs.',
+    emoji: '🫒',
+    suggestions: ['Healthy dining', 'Fresh flavors', 'Light meal']
+  },
+  ramen: {
+    type: 'ramen',
+    title: 'Cozy Ramen Night! 🍲',
+    description: 'Warm, comforting noodle soup perfect for any weather.',
+    emoji: '🍲',
+    suggestions: ['Comfort food', 'Warming meal', 'Cozy night']
+  },
+  burgers: {
+    type: 'burgers',
+    title: 'Classic Burger Night! 🍔',
+    description: 'Juicy, satisfying burgers with all the fixings.',
+    emoji: '🍔',
+    suggestions: ['Classic comfort', 'Satisfying meal', 'Casual dining']
+  },
+  tacos: {
+    type: 'tacos',
+    title: 'Taco Tuesday! 🌮',
+    description: 'Fun, handheld food perfect for sharing and variety.',
+    emoji: '🌮',
+    suggestions: ['Fun dining', 'Variety', 'Handheld food']
+  },
+  greek: {
+    type: 'greek',
+    title: 'Greek Gyros! 🥙',
+    description: 'Fresh Mediterranean flavors with tzatziki and pita.',
+    emoji: '🥙',
+    suggestions: ['Mediterranean', 'Fresh flavors', 'Healthy option']
+  },
+  italian: {
+    type: 'italian',
+    title: 'Italian Classics! 🇮🇹',
+    description: 'Traditional Italian comfort food with rich flavors.',
+    emoji: '🇮🇹',
+    suggestions: ['Classic comfort', 'Rich flavors', 'Traditional']
   },
   turkish: {
-    category: 'turkish',
-    title: 'Turkish Delight! 🧿',
-    description: 'Rich, flavorful dishes from the crossroads of cultures.',
-    emoji: '🧿',
-    restaurants: []
+    type: 'turkish',
+    title: 'Turkish Delights! 🥘',
+    description: 'Exotic flavors and aromatic spices from the Middle East.',
+    emoji: '🥘',
+    suggestions: ['Exotic flavors', 'Aromatic spices', 'Cultural cuisine']
   },
   surprise: {
-    category: 'surprise',
-    title: 'Surprise Me! 🎲',
-    description: 'Let\'s try something completely unexpected tonight!',
-    emoji: '🎲',
-    restaurants: []
+    type: 'surprise',
+    title: 'Surprise Me! 🎉',
+    description: 'Something unexpected and delightful awaits!',
+    emoji: '🎉',
+    suggestions: ['Adventure', 'Unexpected', 'Try something new']
   }
 };
-
-export function calculateFoodRecommendation(answers: { [key: string]: string }): FoodRecommendation {
-  // Simple scoring based on swipe choices
-  const categories = Object.values(answers);
-  
-  // Count category preferences
-  const scores: { [key: string]: number } = {};
-  categories.forEach(category => {
-    scores[category] = (scores[category] || 0) + 1;
-  });
-  
-  // Map combinations to food recommendations
-  if (scores.comfort >= 2 && scores.easy >= 1) {
-    return foodRecommendations.pasta;
-  } else if (scores.light >= 2 || scores.international >= 1) {
-    return foodRecommendations.sushi;
-  } else if (scores.easy >= 2 && scores.budget >= 1) {
-    return foodRecommendations.pizza;
-  } else if (scores.international >= 1 && scores.light >= 1) {
-    return foodRecommendations.tacos;
-  } else if (scores.involved >= 1 && scores.international >= 1) {
-    return foodRecommendations.ramen;
-  } else {
-    return foodRecommendations.burgers;
-  }
-}

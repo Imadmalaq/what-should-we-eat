@@ -25,11 +25,28 @@ export interface Restaurant {
 }
 
 export interface FoodRecommendation {
-  category: string;
+  type: string;
   title: string;
   description: string;
   emoji: string;
-  restaurants: Restaurant[];
+  suggestions: string[];
+  image?: string;
+}
+
+export interface RestaurantRecommendation {
+  name: string;
+  address: string;
+  rating: number;
+  priceLevel: number;
+  cuisine: string;
+  distance: string;
+  speciality: string;
+  phone: string;
+  openNow: boolean;
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
 }
 
 export interface UserLocation {
