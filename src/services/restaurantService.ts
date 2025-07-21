@@ -31,6 +31,9 @@ export class RestaurantService {
         ? location.city 
         : this.getCityFromCoordinates(location.latitude, location.longitude);
       
+      console.log('Restaurant service - location input:', location);
+      console.log('Restaurant service - resolved city:', locationName);
+      
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 500));
       

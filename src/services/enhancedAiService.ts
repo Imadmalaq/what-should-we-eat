@@ -38,10 +38,15 @@ export class EnhancedAIQuestionService {
   }
 
   private getContextualQuestion(previousAnswers: any[], questionIndex: number) {
-    // Extract meal type from answers
-    const mealType = previousAnswers.find(answer => 
-      typeof answer === 'string' && ['full-meal', 'breakfast', 'dessert', 'snacks', 'ice-cream', 'drinks'].includes(answer)
-    );
+    // Extract meal type from answers - check for both object format and string format
+    const mealType = previousAnswers.find(answer => {
+      if (typeof answer === 'object' && answer.mealType) return answer.mealType;
+      if (typeof answer === 'string' && ['full-meal', 'breakfast', 'dessert', 'snacks', 'ice-cream', 'drinks'].includes(answer)) return answer;
+      return false;
+    });
+    
+    const actualMealType = typeof mealType === 'object' ? mealType.mealType : mealType;
+    console.log('AI Service - extracted meal type:', actualMealType, 'from answers:', previousAnswers);
     
     const hasComfort = previousAnswers.includes('comfort');
     const hasAdventurous = previousAnswers.includes('adventurous');
@@ -57,7 +62,7 @@ export class EnhancedAIQuestionService {
     // More comprehensive question bank with 10+ questions
     const questionBanks = {
       // Opening questions (0-1) - adapted for meal type
-      opening: this.getMealTypeQuestions(mealType),
+      opening: this.getMealTypeQuestions(actualMealType),
 
       // Cultural exploration (2-3)
       cultural: [
@@ -174,8 +179,9 @@ export class EnhancedAIQuestionService {
     let selectedQuestion;
 
     if (questionIndex <= 1) {
-      // Opening questions
+      // Opening questions - ALWAYS use meal type specific questions for first 2 questions
       selectedQuestion = this.getRandomUnusedQuestion(questionBanks.opening);
+      console.log('Using meal type specific question for index', questionIndex, ':', selectedQuestion.question);
     } else if (questionIndex <= 3) {
       // Cultural exploration
       selectedQuestion = this.getRandomUnusedQuestion(questionBanks.cultural);
