@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { FoodRecommendation, RestaurantRecommendation } from '@/types/app';
 import { MapPin, ExternalLink, Share, Heart, RotateCcw, Navigation, Home, RefreshCcw } from 'lucide-react';
-import { RestaurantMap } from './RestaurantMap';
+
 import { useToast } from '@/hooks/use-toast';
 
 interface FoodResultProps {
@@ -156,17 +156,6 @@ export function FoodResult({ result, restaurant, allRestaurants = [], onRestart 
                </CardContent>
              </Card>
 
-              {/* Restaurant Map */}
-              {currentRestaurant.coordinates && (
-                <div className="animate-fade-in">
-                  <RestaurantMap
-                    lat={currentRestaurant.coordinates.lat}
-                    lng={currentRestaurant.coordinates.lng}
-                    name={currentRestaurant.name}
-                    address={currentRestaurant.address}
-                  />
-                </div>
-              )}
            </div>
          )}
 
