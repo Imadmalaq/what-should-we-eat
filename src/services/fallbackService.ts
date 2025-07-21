@@ -1,7 +1,7 @@
 // Fallback service for when API is unavailable - stays in public repo
 // This provides basic functionality without revealing your core algorithm
 
-import { SwipeQuestion } from '@/types/quiz';
+import { SwipeQuestion } from '@/types/app';
 
 export class FallbackService {
   // Basic fallback questions when API is down

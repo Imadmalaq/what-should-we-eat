@@ -2,10 +2,9 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { SwipeCard } from '@/components/SwipeCard';
 import { Progress } from '@/components/ui/progress';
-import { foodRecommendations } from '@/data/swipeData';
 import { FoodRecommendation, SwipeQuestion, RestaurantRecommendation } from '@/types/app';
-import { EnhancedAIQuestionService, calculateEnhancedRecommendation } from '@/services/enhancedAiService';
-import { RestaurantService } from '@/services/restaurantService';
+import { PublicAPIClient } from '@/services/api';
+import { FallbackService } from '@/services/fallbackService';
 import { useLocation } from '@/hooks/useLocation';
 import { Heart, X, ArrowLeft, ArrowRight } from 'lucide-react';
 
@@ -19,29 +18,25 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
   const [questions, setQuestions] = useState<SwipeQuestion[]>([]);
   const [isGeneratingQuestion, setIsGeneratingQuestion] = useState(false);
   
-  const aiService = EnhancedAIQuestionService.getInstance();
-  const restaurantService = RestaurantService.getInstance();
   const { location } = useLocation();
-  const totalQuestions = 10;
+  const totalQuestions = 3; // Simplified for public demo
 
   // Generate first question on mount
   useEffect(() => {
     const initializeQuiz = async () => {
-      aiService.resetSession(); // Reset for new session
       setIsGeneratingQuestion(true);
       try {
-        const firstQuestion = await aiService.generateNextQuestion({}, 0);
-        setQuestions([firstQuestion]);
+        const response = await PublicAPIClient.generateQuestion({}, 0);
+        if (response.success && response.data) {
+          setQuestions([response.data]);
+        } else {
+          // Use fallback questions
+          setQuestions(FallbackService.getFallbackQuestions().slice(0, 1));
+        }
       } catch (error) {
         console.error('Error generating first question:', error);
-        // Fallback to a default question
-        setQuestions([{
-          id: 'fallback_1',
-          question: "What's your current mood?",
-          emoji: "😊",
-          optionA: { text: "Relaxed and cozy", emoji: "😌", category: "comfort" },
-          optionB: { text: "Energetic and bold", emoji: "⚡", category: "adventurous" }
-        }]);
+        // Use fallback questions
+        setQuestions(FallbackService.getFallbackQuestions().slice(0, 1));
       }
       setIsGeneratingQuestion(false);
     };
@@ -63,11 +58,11 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
   const isLastQuestion = currentQuestion >= totalQuestions - 1;
 
   const handleSwipeLeft = () => {
-    handleAnswer(question.optionA.category);
+    handleAnswer(question.leftCategory);
   };
 
   const handleSwipeRight = () => {
-    handleAnswer(question.optionB.category);
+    handleAnswer(question.rightCategory);
   };
 
   const handleAnswer = async (category: string) => {
@@ -78,41 +73,107 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
     setAnswers(newAnswers);
 
     if (isLastQuestion) {
-      // Calculate final recommendation using enhanced algorithm
-      const foodType = calculateEnhancedRecommendation(newAnswers);
-      const result = foodRecommendations[foodType] || foodRecommendations.surprise;
-      
-      // Get specific restaurant recommendation
-      try {
-        const restaurant = await restaurantService.findSpecificRestaurant(
-          foodType,
-          location || { latitude: 46.2044, longitude: 6.1432 }, // Default to Geneva center
-          {
-            priceLevel: newAnswers.budget ? 1 : newAnswers.splurge ? 3 : 2,
-            transportMode: 'walking'
-          }
-        );
-        onComplete(result, restaurant || undefined);
-      } catch (error) {
-        console.error('Error finding restaurant:', error);
-        onComplete(result);
-      }
-    } else {
-      // Generate next question based on current answers
+      // Calculate final recommendation using API
       setIsGeneratingQuestion(true);
       try {
-        const nextQuestion = await aiService.generateNextQuestion(newAnswers, currentQuestion + 1);
-        setQuestions(prev => [...prev, nextQuestion]);
-        setTimeout(() => {
-          setCurrentQuestion(prev => prev + 1);
-          setIsGeneratingQuestion(false);
-        }, 200);
+        const response = await PublicAPIClient.getFoodRecommendation(newAnswers);
+        
+        if (response.success && response.data) {
+          const result: FoodRecommendation = response.data;
+
+          // Try to find a restaurant if location is available
+          let restaurant: RestaurantRecommendation | undefined;
+          if (location.latitude && location.longitude) {
+            const restaurantResponse = await PublicAPIClient.findRestaurant(
+              result.cuisine,
+              location,
+              { priceLevel: 2, maxDistance: 10 }
+            );
+            
+            if (restaurantResponse.success && restaurantResponse.data) {
+              restaurant = restaurantResponse.data;
+            }
+          }
+
+          onComplete(result, restaurant);
+        } else {
+          // Use fallback recommendation
+          const fallbackResult: FoodRecommendation = {
+            name: FallbackService.getBasicRecommendation(newAnswers),
+            description: "Based on your preferences, here's what we recommend!",
+            cuisine: 'Various',
+            matchPercentage: 80
+          };
+          onComplete(fallbackResult);
+        }
+      } catch (error) {
+        console.error('Error generating recommendation:', error);
+        // Use fallback recommendation
+        const fallbackResult: FoodRecommendation = {
+          name: FallbackService.getBasicRecommendation(newAnswers),
+          description: "We're sure you'll find something amazing to eat!",
+          cuisine: 'Various',
+          matchPercentage: 75
+        };
+        onComplete(fallbackResult);
+      }
+      setIsGeneratingQuestion(false);
+    } else {
+      // Generate next question
+      setIsGeneratingQuestion(true);
+      try {
+        const response = await PublicAPIClient.generateQuestion(newAnswers, currentQuestion + 1);
+        
+        if (response.success && response.data) {
+          setQuestions(prev => [...prev, response.data]);
+          setTimeout(() => {
+            setCurrentQuestion(prev => prev + 1);
+            setIsGeneratingQuestion(false);
+          }, 200);
+        } else {
+          // Use fallback questions
+          const fallbackQuestions = FallbackService.getFallbackQuestions();
+          const nextIndex = currentQuestion + 1;
+          if (nextIndex < fallbackQuestions.length) {
+            setQuestions(prev => [...prev, fallbackQuestions[nextIndex]]);
+            setTimeout(() => {
+              setCurrentQuestion(prev => prev + 1);
+              setIsGeneratingQuestion(false);
+            }, 200);
+          } else {
+            // No more questions, provide recommendation
+            const fallbackResult: FoodRecommendation = {
+              name: FallbackService.getBasicRecommendation(newAnswers),
+              description: "Based on your preferences so far, here's what we recommend!",
+              cuisine: 'Various',
+              matchPercentage: 75
+            };
+            onComplete(fallbackResult);
+          }
+        }
       } catch (error) {
         console.error('Error generating next question:', error);
-        setIsGeneratingQuestion(false);
-        // Fallback - just move to next with a generic question
-        setCurrentQuestion(prev => prev + 1);
+        // Use fallback questions
+        const fallbackQuestions = FallbackService.getFallbackQuestions();
+        const nextIndex = currentQuestion + 1;
+        if (nextIndex < fallbackQuestions.length) {
+          setQuestions(prev => [...prev, fallbackQuestions[nextIndex]]);
+          setTimeout(() => {
+            setCurrentQuestion(prev => prev + 1);
+            setIsGeneratingQuestion(false);
+          }, 200);
+        } else {
+          // Provide recommendation with current data
+          const fallbackResult: FoodRecommendation = {
+            name: FallbackService.getBasicRecommendation(newAnswers),
+            description: "Based on your preferences so far, here's what we recommend!",
+            cuisine: 'Various',
+            matchPercentage: 75
+          };
+          onComplete(fallbackResult);
+        }
       }
+      setIsGeneratingQuestion(false);
     }
   };
 
@@ -149,9 +210,9 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
             <div className="flex h-full min-h-[250px]">
               {/* Left Option - Swipe Left */}
               <div className="flex-1 flex flex-col items-center justify-center p-4 bg-gradient-to-r from-orange-50/40 to-transparent border-r border-border/20">
-                <div className="text-4xl mb-3">{question.optionA.emoji}</div>
+                <div className="text-4xl mb-3">{question.leftOption.emoji}</div>
                 <p className="font-medium text-center text-sm leading-tight text-foreground mb-3">
-                  {question.optionA.text}
+                  {question.leftOption.text}
                 </p>
                 <div className="text-xs text-orange-600 font-medium opacity-70 flex items-center gap-1">
                   <ArrowLeft className="w-3 h-3" />
@@ -161,9 +222,9 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
 
               {/* Right Option - Swipe Right */}
               <div className="flex-1 flex flex-col items-center justify-center p-4 bg-gradient-to-l from-green-50/40 to-transparent">
-                <div className="text-4xl mb-3">{question.optionB.emoji}</div>
+                <div className="text-4xl mb-3">{question.rightOption.emoji}</div>
                 <p className="font-medium text-center text-sm leading-tight text-foreground mb-3">
-                  {question.optionB.text}
+                  {question.rightOption.text}
                 </p>
                 <div className="text-xs text-green-600 font-medium opacity-70 flex items-center gap-1">
                   Swipe right
