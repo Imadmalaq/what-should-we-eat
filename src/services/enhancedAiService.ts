@@ -1,10 +1,13 @@
 import { SwipeQuestion } from '@/types/app';
+import { MealType } from '@/components/MealTypeSelector';
+import { questionBank, getQuestionsForMealType, hasEnoughDataForMealType } from '@/data/questionBank';
 
-// Enhanced AI service with more dynamic and varied questions
 export class EnhancedAIQuestionService {
   private static instance: EnhancedAIQuestionService;
   private questionHistory: string[] = [];
-  private sessionQuestions: SwipeQuestion[] = [];
+  private currentSessionAnswers: any[] = [];
+  private availableQuestions: any[] = [];
+  private currentMealType: MealType | null = null;
 
   static getInstance(): EnhancedAIQuestionService {
     if (!this.instance) {
@@ -13,320 +16,95 @@ export class EnhancedAIQuestionService {
     return this.instance;
   }
 
-  async generateNextQuestion(
-    previousAnswers: { [key: string]: string | any },
-    questionIndex: number
-  ): Promise<SwipeQuestion> {
-    const answerHistory = Object.values(previousAnswers);
-    const sessionId = Math.random().toString(36).substring(7);
-    
-    // Get contextual question based on previous answers
-    const questionTemplate = this.getContextualQuestion(answerHistory, questionIndex);
-    
-    const question: SwipeQuestion = {
-      id: `enhanced_${sessionId}_${questionIndex}`,
-      question: questionTemplate.question,
-      emoji: questionTemplate.emoji,
-      optionA: questionTemplate.optionA,
-      optionB: questionTemplate.optionB
-    };
-
-    this.questionHistory.push(questionTemplate.question);
-    this.sessionQuestions.push(question);
-    
-    return question;
+  resetSession() {
+    this.questionHistory = [];
+    this.currentSessionAnswers = [];
+    this.availableQuestions = [];
+    this.currentMealType = null;
   }
 
-  private getContextualQuestion(previousAnswers: any[], questionIndex: number) {
-    // Extract meal type from answers - check for both object format and string format
-    const mealType = previousAnswers.find(answer => {
-      if (typeof answer === 'object' && answer.mealType) return answer.mealType;
-      if (typeof answer === 'string' && ['full-meal', 'breakfast', 'dessert', 'snacks', 'ice-cream', 'drinks'].includes(answer)) return answer;
-      return false;
-    });
+  async generateNextQuestion(currentAnswers: any, questionIndex: number): Promise<SwipeQuestion> {
+    this.currentSessionAnswers = Array.isArray(currentAnswers) ? currentAnswers : Object.values(currentAnswers);
     
-    const actualMealType = typeof mealType === 'object' ? mealType.mealType : mealType;
-    console.log('AI Service - extracted meal type:', actualMealType, 'from answers:', previousAnswers);
-    
-    const hasComfort = previousAnswers.includes('comfort');
-    const hasAdventurous = previousAnswers.includes('adventurous');
-    const hasSpicy = previousAnswers.includes('spicy');
-    const hasHealthy = previousAnswers.includes('healthy');
-    const hasInternational = previousAnswers.includes('international');
-    const hasBudget = previousAnswers.includes('budget');
-    const hasQuick = previousAnswers.includes('quick');
-    const hasAsian = previousAnswers.includes('asian');
-    const hasMediterranean = previousAnswers.includes('mediterranean');
-    const hasVegetarian = previousAnswers.includes('vegetarian');
-
-    // More comprehensive question bank with 10+ questions
-    const questionBanks = {
-      // Opening questions (0-1) - adapted for meal type
-      opening: this.getMealTypeQuestions(actualMealType),
-
-      // Cultural exploration (2-3)
-      cultural: [
-        {
-          question: "Where should we travel through food?",
-          emoji: "🌍",
-          optionA: { text: "Stay in familiar territory", emoji: "🏠", category: "familiar" },
-          optionB: { text: "Take me on a culinary journey", emoji: "✈️", category: "international" }
-        },
-        {
-          question: "What's your relationship with spice?",
-          emoji: "🌶️",
-          optionA: { text: "Spice is nice, but gentle", emoji: "😊", category: "mild" },
-          optionB: { text: "Bring the heat!", emoji: "🔥", category: "spicy" }
-        }
-      ],
-
-      // Specific preferences (4-6)
-      specific: [
-        {
-          question: "Temperature preference tonight?",
-          emoji: "🌡️",
-          optionA: { text: "Something warm and comforting", emoji: "☕", category: "hot" },
-          optionB: { text: "Fresh and cooling", emoji: "🧊", category: "cold" }
-        },
-        {
-          question: "Texture experience you're craving?",
-          emoji: "👅",
-          optionA: { text: "Smooth and creamy", emoji: "🥛", category: "creamy" },
-          optionB: { text: "Crispy and textured", emoji: "🥖", category: "crunchy" }
-        },
-        {
-          question: "Protein philosophy for tonight?",
-          emoji: "🥩",
-          optionA: { text: "Plant-powered", emoji: "🌱", category: "vegetarian" },
-          optionB: { text: "Meat-centric", emoji: "🥩", category: "meat" }
-        }
-      ],
-
-      // Contextual based on previous answers
-      adaptive: {
-        international_asian: {
-          question: "Which Asian experience calls to you?",
-          emoji: "🥢",
-          optionA: { text: "Japanese precision and elegance", emoji: "🍣", category: "japanese" },
-          optionB: { text: "Bold Southeast Asian flavors", emoji: "🍜", category: "southeast_asian" }
-        },
-        international_mediterranean: {
-          question: "Mediterranean mood?",
-          emoji: "🫒",
-          optionA: { text: "Italian comfort", emoji: "🍝", category: "italian" },
-          optionB: { text: "Greek freshness", emoji: "🥗", category: "greek" }
-        },
-        comfort_quick: {
-          question: "Quick comfort food style?",
-          emoji: "⚡",
-          optionA: { text: "Classic and reliable", emoji: "🍔", category: "classic_comfort" },
-          optionB: { text: "Elevated comfort", emoji: "🍕", category: "elevated_comfort" }
-        },
-        spicy_adventurous: {
-          question: "How adventurous with the heat?",
-          emoji: "🌶️",
-          optionA: { text: "Flavorful heat with balance", emoji: "🔥", category: "balanced_spicy" },
-          optionB: { text: "Challenge my taste buds", emoji: "🥵", category: "extreme_spicy" }
-        }
-      },
-
-      // Practical considerations (7-9)
-      practical: [
-        {
-          question: "Time and effort tonight?",
-          emoji: "⏰",
-          optionA: { text: "Quick and convenient", emoji: "⚡", category: "quick" },
-          optionB: { text: "Worth taking time for", emoji: "🕒", category: "leisurely" }
-        },
-        {
-          question: "Budget considerations?",
-          emoji: "💰",
-          optionA: { text: "Keep it reasonable", emoji: "💵", category: "budget" },
-          optionB: { text: "Treat myself tonight", emoji: "💎", category: "splurge" }
-        },
-        {
-          question: "Health consciousness level?",
-          emoji: "🥗",
-          optionA: { text: "Let me indulge tonight", emoji: "🍰", category: "indulgent" },
-          optionB: { text: "Keep it on the lighter side", emoji: "🥑", category: "healthy" }
-        }
-      ],
-
-      // Final refinement (10+)
-      refinement: [
-        {
-          question: "Dining experience vibe?",
-          emoji: "🍽️",
-          optionA: { text: "Casual and relaxed", emoji: "😌", category: "casual" },
-          optionB: { text: "A bit more upscale", emoji: "🎩", category: "upscale" }
-        },
-        {
-          question: "Social aspect preference?",
-          emoji: "👥",
-          optionA: { text: "Perfect for sharing", emoji: "🤝", category: "sharing" },
-          optionB: { text: "My own individual experience", emoji: "🎯", category: "individual" }
-        },
-        {
-          question: "Final decision factor?",
-          emoji: "🎪",
-          optionA: { text: "Convenience wins", emoji: "📍", category: "convenient" },
-          optionB: { text: "Experience matters most", emoji: "⭐", category: "experience" }
-        }
-      ]
-    };
-
-    // Determine which question to ask based on index and context
-    let selectedQuestion;
-
-    if (questionIndex <= 1) {
-      // Opening questions - ALWAYS use meal type specific questions for first 2 questions
-      selectedQuestion = this.getRandomUnusedQuestion(questionBanks.opening);
-      console.log('Using meal type specific question for index', questionIndex, ':', selectedQuestion.question);
-    } else if (questionIndex <= 3) {
-      // Cultural exploration
-      selectedQuestion = this.getRandomUnusedQuestion(questionBanks.cultural);
-    } else if (questionIndex <= 6) {
-    // Check for adaptive questions first
-      if (hasInternational && hasAsian && questionBanks.adaptive.international_asian && 
-          !this.questionHistory.includes(questionBanks.adaptive.international_asian.question)) {
-        selectedQuestion = questionBanks.adaptive.international_asian;
-      } else if (hasInternational && hasMediterranean && questionBanks.adaptive.international_mediterranean &&
-                 !this.questionHistory.includes(questionBanks.adaptive.international_mediterranean.question)) {
-        selectedQuestion = questionBanks.adaptive.international_mediterranean;
-      } else if (hasComfort && hasQuick && questionBanks.adaptive.comfort_quick &&
-                 !this.questionHistory.includes(questionBanks.adaptive.comfort_quick.question)) {
-        selectedQuestion = questionBanks.adaptive.comfort_quick;
-      } else if (hasSpicy && hasAdventurous && questionBanks.adaptive.spicy_adventurous &&
-                 !this.questionHistory.includes(questionBanks.adaptive.spicy_adventurous.question)) {
-        selectedQuestion = questionBanks.adaptive.spicy_adventurous;
-      } else {
-        selectedQuestion = this.getRandomUnusedQuestion(questionBanks.specific);
+    // Extract meal type from answers if not already set
+    if (!this.currentMealType) {
+      this.currentMealType = this.extractMealType(this.currentSessionAnswers);
+      if (this.currentMealType) {
+        this.availableQuestions = this.shuffleArray(getQuestionsForMealType(this.currentMealType));
+        console.log('AI Service - initialized questions for meal type:', this.currentMealType, 'available:', this.availableQuestions.length);
       }
-    } else if (questionIndex <= 9) {
-      // Practical considerations
-      selectedQuestion = this.getRandomUnusedQuestion(questionBanks.practical);
-    } else {
-      // Final refinement
-      selectedQuestion = this.getRandomUnusedQuestion(questionBanks.refinement);
     }
+    
+    try {
+      // Check if we have enough data and can end early
+      if (questionIndex >= 4 && this.currentMealType && hasEnoughDataForMealType(this.currentMealType, this.currentSessionAnswers)) {
+        console.log('AI Service - enough data collected, could end quiz early');
+      }
+      
+      // Get next unused question from filtered bank
+      const question = this.getNextFilteredQuestion();
+      
+      // Add to history to avoid repeats
+      this.questionHistory.push(question.question);
+      
+      return {
+        id: question.id || `q_${questionIndex}`,
+        question: question.question,
+        emoji: question.emoji,
+        optionA: question.optionA,
+        optionB: question.optionB
+      };
+    } catch (error) {
+      console.error('Error generating question:', error);
+      throw error;
+    }
+  }
 
-    // Fallback if we somehow don't have a question
-    if (!selectedQuestion) {
-      selectedQuestion = {
-        question: "What feels right tonight?",
+  private extractMealType(answers: any[]): MealType | null {
+    // Look for meal type in answers
+    for (const answer of answers) {
+      if (typeof answer === 'object' && answer.mealType) {
+        return answer.mealType;
+      }
+      if (typeof answer === 'string' && ['full-meal', 'breakfast', 'dessert', 'snacks', 'ice-cream', 'drinks'].includes(answer)) {
+        return answer as MealType;
+      }
+    }
+    return null;
+  }
+
+  private getNextFilteredQuestion() {
+    // Get next question that hasn't been used
+    const unusedQuestions = this.availableQuestions.filter(q => 
+      !this.questionHistory.includes(q.question)
+    );
+    
+    if (unusedQuestions.length === 0) {
+      console.warn('No more unused questions available');
+      // Return a fallback question
+      return {
+        id: 'fallback',
+        question: "What feels right for you?",
         emoji: "🎯",
-        optionA: { text: "Go with the flow", emoji: "🌊", category: "flexible" },
-        optionB: { text: "Something decisive", emoji: "⚡", category: "decisive" }
+        optionA: { text: "Something familiar", emoji: "🤗", category: "familiar" },
+        optionB: { text: "Something new", emoji: "✨", category: "new" }
       };
     }
-
-    return selectedQuestion;
+    
+    // Return the next question in priority order
+    const nextQuestion = unusedQuestions[0];
+    console.log('AI Service - selected question:', nextQuestion.question, 'for meal type:', this.currentMealType);
+    
+    return nextQuestion;
   }
 
-  private getMealTypeQuestions(mealType?: string) {
-    const baseQuestions = {
-      'full-meal': [
-        {
-          question: "What's your current mood for this meal?",
-          emoji: "🍽️",
-          optionA: { text: "Relaxed and cozy", emoji: "😌", category: "comfort" },
-          optionB: { text: "Energetic and bold", emoji: "⚡", category: "adventurous" }
-        },
-        {
-          question: "How much culinary adventure are you seeking?",
-          emoji: "🌟",
-          optionA: { text: "Familiar and satisfying", emoji: "🤗", category: "familiar" },
-          optionB: { text: "Something new and exciting", emoji: "🚀", category: "adventurous" }
-        }
-      ],
-      'breakfast': [
-        {
-          question: "How do you want to start your day?",
-          emoji: "🌅",
-          optionA: { text: "Light and energizing", emoji: "🥗", category: "healthy" },
-          optionB: { text: "Hearty and filling", emoji: "🥞", category: "comfort" }
-        },
-        {
-          question: "Morning vibe check?",
-          emoji: "☀️",
-          optionA: { text: "Quick and efficient", emoji: "⚡", category: "quick" },
-          optionB: { text: "Leisurely and indulgent", emoji: "🛋️", category: "leisurely" }
-        }
-      ],
-      'dessert': [
-        {
-          question: "What kind of sweet satisfaction are you craving?",
-          emoji: "🍰",
-          optionA: { text: "Rich and indulgent", emoji: "🍫", category: "indulgent" },
-          optionB: { text: "Light and refreshing", emoji: "🍓", category: "light" }
-        },
-        {
-          question: "Temperature preference for your sweet treat?",
-          emoji: "🌡️",
-          optionA: { text: "Cool and refreshing", emoji: "🧊", category: "cold" },
-          optionB: { text: "Warm and comforting", emoji: "☕", category: "hot" }
-        }
-      ],
-      'snacks': [
-        {
-          question: "What kind of snack experience are you after?",
-          emoji: "🥨",
-          optionA: { text: "Crunchy and satisfying", emoji: "🥜", category: "crunchy" },
-          optionB: { text: "Soft and comforting", emoji: "🍪", category: "soft" }
-        },
-        {
-          question: "Flavor profile for your snack?",
-          emoji: "🎯",
-          optionA: { text: "Savory and salty", emoji: "🧂", category: "savory" },
-          optionB: { text: "Sweet and delightful", emoji: "🍯", category: "sweet" }
-        }
-      ],
-      'ice-cream': [
-        {
-          question: "What frozen treat experience sounds perfect?",
-          emoji: "🍦",
-          optionA: { text: "Classic and creamy", emoji: "🍨", category: "classic" },
-          optionB: { text: "Unique and adventurous", emoji: "🍧", category: "adventurous" }
-        },
-        {
-          question: "Texture preference for your frozen treat?",
-          emoji: "🥄",
-          optionA: { text: "Smooth and rich", emoji: "🥛", category: "creamy" },
-          optionB: { text: "Mix-ins and crunch", emoji: "🍪", category: "textured" }
-        }
-      ],
-      'drinks': [
-        {
-          question: "What's the vibe you're going for?",
-          emoji: "☕",
-          optionA: { text: "Cozy café atmosphere", emoji: "📚", category: "cozy" },
-          optionB: { text: "Social bar scene", emoji: "🍸", category: "social" }
-        },
-        {
-          question: "Energy level preference?",
-          emoji: "⚡",
-          optionA: { text: "Caffeinated and energizing", emoji: "☕", category: "energizing" },
-          optionB: { text: "Relaxing and smooth", emoji: "🍷", category: "relaxing" }
-        }
-      ]
-    };
-
-    return baseQuestions[mealType as keyof typeof baseQuestions] || baseQuestions['full-meal'];
-  }
-
-  private getRandomUnusedQuestion(questions: any[]) {
-    const unusedQuestions = questions.filter(q => !this.questionHistory.includes(q.question));
-    if (unusedQuestions.length === 0) {
-      // If all questions in this category have been used, reset the history for this session
-      this.questionHistory = [];
-      return questions[Math.floor(Math.random() * questions.length)];
+  private shuffleArray(array: any[]): any[] {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-    return unusedQuestions[Math.floor(Math.random() * unusedQuestions.length)];
-  }
-
-  resetSession(): void {
-    this.questionHistory = [];
-    this.sessionQuestions = [];
+    return shuffled;
   }
 }
 

@@ -26,13 +26,29 @@ export class RestaurantService {
       // In production, this would use Google Places API
       // For now, simulate API call with realistic restaurant data
       
-      // Prioritize manual city input over coordinates, ensure manual input is always used
-      const locationName = location.city && location.city !== 'Your City' 
-        ? location.city 
-        : this.getCityFromCoordinates(location.latitude, location.longitude);
+      // Prioritize manual city input over coordinates, ensure valid location
+      let locationName: string;
       
-      console.log('Restaurant service - location input:', location);
-      console.log('Restaurant service - resolved city:', locationName);
+      if (location.isManualInput && location.city && location.city !== 'Your City') {
+        // Manual input takes absolute priority
+        locationName = location.city;
+        console.log('Restaurant service - using manual input city:', locationName);
+      } else if (location.city && location.city !== 'Your City') {
+        // Use geocoded city from coordinates
+        locationName = location.city;
+        console.log('Restaurant service - using geocoded city:', locationName);
+      } else if (location.latitude !== 0 && location.longitude !== 0) {
+        // Try to resolve from coordinates
+        locationName = this.getCityFromCoordinates(location.latitude, location.longitude);
+        console.log('Restaurant service - resolved city from coordinates:', locationName);
+      } else {
+        // Fallback to default
+        locationName = 'Your City';
+        console.log('Restaurant service - using fallback city:', locationName);
+      }
+      
+      console.log('Restaurant service - final location input:', location);
+      console.log('Restaurant service - final resolved city:', locationName);
       
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 500));
