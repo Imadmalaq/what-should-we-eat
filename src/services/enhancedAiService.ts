@@ -194,14 +194,18 @@ export class EnhancedAIQuestionService {
       // Cultural exploration
       selectedQuestion = this.getRandomUnusedQuestion(questionBanks.cultural);
     } else if (questionIndex <= 6) {
-      // Check for adaptive questions first
-      if (hasInternational && hasAsian && questionBanks.adaptive.international_asian) {
+    // Check for adaptive questions first
+      if (hasInternational && hasAsian && questionBanks.adaptive.international_asian && 
+          !this.questionHistory.includes(questionBanks.adaptive.international_asian.question)) {
         selectedQuestion = questionBanks.adaptive.international_asian;
-      } else if (hasInternational && hasMediterranean && questionBanks.adaptive.international_mediterranean) {
+      } else if (hasInternational && hasMediterranean && questionBanks.adaptive.international_mediterranean &&
+                 !this.questionHistory.includes(questionBanks.adaptive.international_mediterranean.question)) {
         selectedQuestion = questionBanks.adaptive.international_mediterranean;
-      } else if (hasComfort && hasQuick && questionBanks.adaptive.comfort_quick) {
+      } else if (hasComfort && hasQuick && questionBanks.adaptive.comfort_quick &&
+                 !this.questionHistory.includes(questionBanks.adaptive.comfort_quick.question)) {
         selectedQuestion = questionBanks.adaptive.comfort_quick;
-      } else if (hasSpicy && hasAdventurous && questionBanks.adaptive.spicy_adventurous) {
+      } else if (hasSpicy && hasAdventurous && questionBanks.adaptive.spicy_adventurous &&
+                 !this.questionHistory.includes(questionBanks.adaptive.spicy_adventurous.question)) {
         selectedQuestion = questionBanks.adaptive.spicy_adventurous;
       } else {
         selectedQuestion = this.getRandomUnusedQuestion(questionBanks.specific);
@@ -230,6 +234,8 @@ export class EnhancedAIQuestionService {
   private getRandomUnusedQuestion(questions: any[]) {
     const unusedQuestions = questions.filter(q => !this.questionHistory.includes(q.question));
     if (unusedQuestions.length === 0) {
+      // If all questions in this category have been used, reset the history for this session
+      this.questionHistory = [];
       return questions[Math.floor(Math.random() * questions.length)];
     }
     return unusedQuestions[Math.floor(Math.random() * unusedQuestions.length)];

@@ -26,6 +26,7 @@ export class RestaurantService {
       // In production, this would use Google Places API
       // For now, simulate API call with realistic restaurant data
       
+      // Prioritize manual city input over coordinates
       const locationName = location.city || this.getCityFromCoordinates(location.latitude, location.longitude);
       
       // Simulate API delay
@@ -134,6 +135,9 @@ export class RestaurantService {
   private getCityFromCoordinates(lat: number, lng: number): string {
     // In production, this would use reverse geocoding API
     // For now, return a reasonable default based on coordinates
+    
+    // Handle case where manual location was set (coordinates are 0,0)
+    if (lat === 0 && lng === 0) return 'Your City';
     
     // Major cities by approximate coordinates
     if (lat > 45 && lat < 47 && lng > 5 && lng < 8) return 'Geneva';
