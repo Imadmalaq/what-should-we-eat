@@ -45,17 +45,6 @@ export function HeroSection({ onStartQuiz }: HeroSectionProps) {
                   </div>
                 </div>
               </div>
-              {/* Swipe Indicators */}
-              <div className="absolute -left-8 top-1/2 transform -translate-y-1/2 animate-pulse">
-                <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center">
-                  <span className="text-red-500 text-2xl">👈</span>
-                </div>
-              </div>
-              <div className="absolute -right-8 top-1/2 transform -translate-y-1/2 animate-pulse">
-                <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
-                  <span className="text-green-500 text-2xl">👉</span>
-                </div>
-              </div>
             </div>
           </div>
 
