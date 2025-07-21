@@ -32,17 +32,21 @@ export function HeroSection({ onStartQuiz }: HeroSectionProps) {
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="relative w-64 h-40">
                   {/* Card 1 */}
-                  <div className="absolute top-0 left-4 w-56 h-32 bg-gradient-romantic rounded-2xl shadow-warm transform rotate-12 animate-[float_3s_ease-in-out_infinite] flex items-center justify-center">
-                    <span className="text-white text-2xl">🍕 Pizza?</span>
+                  <div className="absolute top-0 left-4 w-56 h-32 bg-gradient-romantic rounded-2xl shadow-warm transform rotate-12 animate-[float_4s_ease-in-out_infinite] hover:scale-105 transition-transform duration-300 flex items-center justify-center backdrop-blur-sm">
+                    <span className="text-white text-2xl font-semibold drop-shadow-lg">🍕 Pizza?</span>
                   </div>
                   {/* Card 2 */}
-                  <div className="absolute top-2 left-8 w-56 h-32 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl shadow-warm transform -rotate-6 animate-[float_3s_ease-in-out_infinite_0.5s] flex items-center justify-center">
-                    <span className="text-white text-2xl">🍜 Ramen?</span>
+                  <div className="absolute top-2 left-8 w-56 h-32 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl shadow-warm transform -rotate-6 animate-[float_4s_ease-in-out_infinite_0.8s] hover:scale-105 transition-transform duration-300 flex items-center justify-center backdrop-blur-sm">
+                    <span className="text-white text-2xl font-semibold drop-shadow-lg">🍜 Ramen?</span>
                   </div>
                   {/* Card 3 */}
-                  <div className="absolute top-4 left-12 w-56 h-32 bg-gradient-to-br from-green-400 to-teal-500 rounded-2xl shadow-warm transform rotate-3 animate-[float_3s_ease-in-out_infinite_1s] flex items-center justify-center">
-                    <span className="text-white text-2xl">🍣 Sushi?</span>
+                  <div className="absolute top-4 left-12 w-56 h-32 bg-gradient-to-br from-green-400 to-teal-500 rounded-2xl shadow-warm transform rotate-3 animate-[float_4s_ease-in-out_infinite_1.6s] hover:scale-105 transition-transform duration-300 flex items-center justify-center backdrop-blur-sm">
+                    <span className="text-white text-2xl font-semibold drop-shadow-lg">🍣 Sushi?</span>
                   </div>
+                  {/* Floating sparkles */}
+                  <div className="absolute top-8 left-2 w-2 h-2 bg-yellow-400 rounded-full animate-ping"></div>
+                  <div className="absolute bottom-8 right-2 w-3 h-3 bg-pink-400 rounded-full animate-pulse"></div>
+                  <div className="absolute top-16 right-8 w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce"></div>
                 </div>
               </div>
             </div>
