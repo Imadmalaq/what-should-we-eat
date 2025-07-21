@@ -18,7 +18,7 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        food: "bg-gradient-food text-white hover:shadow-warm transform hover:scale-105 transition-all duration-300 border-0",
+        food: "bg-gradient-romantic text-white hover:shadow-warm transform hover:scale-105 transition-all duration-300 border-0 font-semibold",
         quiz: "bg-card text-card-foreground border-2 border-border hover:border-primary hover:shadow-soft transform hover:scale-102 transition-all duration-200",
       },
       size: {
