@@ -1,14 +1,13 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Utensils, Clock, Heart, Smartphone, Zap, DollarSign, CheckCircle } from 'lucide-react';
-
 interface HeroSectionProps {
   onStartQuiz: () => void;
 }
-
-export function HeroSection({ onStartQuiz }: HeroSectionProps) {
-  return (
-    <div className="min-h-screen bg-gradient-warm">
+export function HeroSection({
+  onStartQuiz
+}: HeroSectionProps) {
+  return <div className="min-h-screen bg-gradient-warm">
       {/* Hero Content */}
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto text-center space-y-8">
@@ -61,13 +60,7 @@ export function HeroSection({ onStartQuiz }: HeroSectionProps) {
                   </div>
                   
                   {/* CTA Button integrated */}
-                  <Button
-                    onClick={onStartQuiz}
-                    size="lg"
-                    className="w-full text-lg px-8 py-4 bg-gradient-romantic text-primary-foreground hover:opacity-90 shadow-warm transform hover:scale-105 transition-all duration-200 rounded-2xl font-bold border-0"
-                  >
-                    Let's Go! 🎯
-                  </Button>
+                  <Button onClick={onStartQuiz} size="lg" className="w-full text-lg px-8 py-4 bg-gradient-romantic text-primary-foreground hover:opacity-90 shadow-warm transform hover:scale-105 transition-all duration-200 rounded-2xl font-bold border-0">Press to Start! </Button>
                 </div>
               </div>
               
@@ -122,6 +115,5 @@ export function HeroSection({ onStartQuiz }: HeroSectionProps) {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 }
