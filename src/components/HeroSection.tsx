@@ -26,59 +26,56 @@ export function HeroSection({ onStartQuiz }: HeroSectionProps) {
           </div>
 
           {/* Hero Animation */}
-          <div className="relative mx-auto max-w-2xl">
-            <div className="relative w-80 h-80 mx-auto flex items-center justify-center">
+          <div className="relative mx-auto max-w-4xl">
+            <div className="relative w-96 h-96 mx-auto flex items-center justify-center">
               {/* Central food showcase with gentle rotation */}
-              <div className="relative w-64 h-64">
-                {/* Center circle */}
+              <div className="relative w-80 h-80">
+                {/* Center circle with button */}
                 <div className="absolute inset-0 bg-gradient-romantic rounded-full shadow-warm flex items-center justify-center">
                   <div className="text-center text-white">
-                    <div className="text-5xl mb-2 animate-pulse">🍽️</div>
-                    <p className="text-lg font-semibold">What to eat?</p>
+                    <div className="text-6xl mb-3 animate-pulse">🍽️</div>
+                    <p className="text-xl font-semibold mb-4">What to eat?</p>
+                    <Button
+                      onClick={onStartQuiz}
+                      size="lg"
+                      className="text-lg px-8 py-4 bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm transform hover:scale-105 transition-all duration-200 rounded-xl font-bold"
+                    >
+                      Press to Start!
+                    </Button>
                   </div>
                 </div>
                 
                 {/* Orbiting food items */}
-                <div className="absolute inset-0 animate-[spin_20s_linear_infinite]">
-                  <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-white rounded-full p-3 shadow-lg">
-                    <span className="text-2xl">🍕</span>
+                <div className="absolute inset-0 animate-[spin_25s_linear_infinite]">
+                  <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white rounded-full p-4 shadow-lg">
+                    <span className="text-3xl">🍕</span>
                   </div>
-                  <div className="absolute top-1/2 -right-6 transform -translate-y-1/2 bg-white rounded-full p-3 shadow-lg">
-                    <span className="text-2xl">🍜</span>
+                  <div className="absolute top-1/2 -right-8 transform -translate-y-1/2 bg-white rounded-full p-4 shadow-lg">
+                    <span className="text-3xl">🍜</span>
                   </div>
-                  <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-white rounded-full p-3 shadow-lg">
-                    <span className="text-2xl">🍣</span>
+                  <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white rounded-full p-4 shadow-lg">
+                    <span className="text-3xl">🍣</span>
                   </div>
-                  <div className="absolute top-1/2 -left-6 transform -translate-y-1/2 bg-white rounded-full p-3 shadow-lg">
-                    <span className="text-2xl">🥗</span>
+                  <div className="absolute top-1/2 -left-8 transform -translate-y-1/2 bg-white rounded-full p-4 shadow-lg">
+                    <span className="text-3xl">🥗</span>
                   </div>
-                  <div className="absolute top-6 right-6 bg-white rounded-full p-2 shadow-lg">
-                    <span className="text-xl">🍰</span>
+                  <div className="absolute top-8 right-8 bg-white rounded-full p-3 shadow-lg">
+                    <span className="text-2xl">🍰</span>
                   </div>
-                  <div className="absolute bottom-6 right-6 bg-white rounded-full p-2 shadow-lg">
-                    <span className="text-xl">🌮</span>
+                  <div className="absolute bottom-8 right-8 bg-white rounded-full p-3 shadow-lg">
+                    <span className="text-2xl">🌮</span>
                   </div>
-                  <div className="absolute bottom-6 left-6 bg-white rounded-full p-2 shadow-lg">
-                    <span className="text-xl">🍔</span>
+                  <div className="absolute bottom-8 left-8 bg-white rounded-full p-3 shadow-lg">
+                    <span className="text-2xl">🍔</span>
                   </div>
-                  <div className="absolute top-6 left-6 bg-white rounded-full p-2 shadow-lg">
-                    <span className="text-xl">🥪</span>
+                  <div className="absolute top-8 left-8 bg-white rounded-full p-3 shadow-lg">
+                    <span className="text-2xl">🥪</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* CTA Button */}
-          <div className="animate-slide-in mt-12">
-            <Button
-              onClick={onStartQuiz}
-              size="lg"
-              className="text-2xl px-16 py-8 bg-gradient-romantic hover:opacity-90 text-white shadow-warm transform hover:scale-105 transition-all duration-200 rounded-2xl font-bold"
-            >
-              Press to Start!
-            </Button>
-          </div>
 
           {/* Feature Cards */}
           <div className="grid md:grid-cols-3 gap-6 mt-16 animate-fade-in">
