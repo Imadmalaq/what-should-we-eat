@@ -27,24 +27,43 @@ export function HeroSection({ onStartQuiz }: HeroSectionProps) {
 
           {/* Hero Animation */}
           <div className="relative mx-auto max-w-2xl">
-            <div className="relative w-80 h-80 mx-auto">
-              {/* Simple food grid showcase */}
-              <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto">
-                <div className="bg-gradient-romantic rounded-xl p-6 text-center transform hover:scale-105 transition-all duration-500">
-                  <div className="text-4xl mb-2">🍕</div>
-                  <p className="text-white font-medium">Italian</p>
+            <div className="relative w-80 h-80 mx-auto flex items-center justify-center">
+              {/* Central food showcase with gentle rotation */}
+              <div className="relative w-64 h-64">
+                {/* Center circle */}
+                <div className="absolute inset-0 bg-gradient-romantic rounded-full shadow-warm flex items-center justify-center">
+                  <div className="text-center text-white">
+                    <div className="text-5xl mb-2 animate-pulse">🍽️</div>
+                    <p className="text-lg font-semibold">What to eat?</p>
+                  </div>
                 </div>
-                <div className="bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl p-6 text-center transform hover:scale-105 transition-all duration-500">
-                  <div className="text-4xl mb-2">🍜</div>
-                  <p className="text-white font-medium">Asian</p>
-                </div>
-                <div className="bg-gradient-to-br from-green-400 to-teal-500 rounded-xl p-6 text-center transform hover:scale-105 transition-all duration-500">
-                  <div className="text-4xl mb-2">🥗</div>
-                  <p className="text-white font-medium">Healthy</p>
-                </div>
-                <div className="bg-gradient-to-br from-purple-400 to-pink-500 rounded-xl p-6 text-center transform hover:scale-105 transition-all duration-500">
-                  <div className="text-4xl mb-2">🍰</div>
-                  <p className="text-white font-medium">Dessert</p>
+                
+                {/* Orbiting food items */}
+                <div className="absolute inset-0 animate-[spin_20s_linear_infinite]">
+                  <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-white rounded-full p-3 shadow-lg">
+                    <span className="text-2xl">🍕</span>
+                  </div>
+                  <div className="absolute top-1/2 -right-6 transform -translate-y-1/2 bg-white rounded-full p-3 shadow-lg">
+                    <span className="text-2xl">🍜</span>
+                  </div>
+                  <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-white rounded-full p-3 shadow-lg">
+                    <span className="text-2xl">🍣</span>
+                  </div>
+                  <div className="absolute top-1/2 -left-6 transform -translate-y-1/2 bg-white rounded-full p-3 shadow-lg">
+                    <span className="text-2xl">🥗</span>
+                  </div>
+                  <div className="absolute top-6 right-6 bg-white rounded-full p-2 shadow-lg">
+                    <span className="text-xl">🍰</span>
+                  </div>
+                  <div className="absolute bottom-6 right-6 bg-white rounded-full p-2 shadow-lg">
+                    <span className="text-xl">🌮</span>
+                  </div>
+                  <div className="absolute bottom-6 left-6 bg-white rounded-full p-2 shadow-lg">
+                    <span className="text-xl">🍔</span>
+                  </div>
+                  <div className="absolute top-6 left-6 bg-white rounded-full p-2 shadow-lg">
+                    <span className="text-xl">🥪</span>
+                  </div>
                 </div>
               </div>
             </div>
