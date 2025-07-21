@@ -2,16 +2,16 @@ export interface SwipeQuestion {
   id: string;
   question: string;
   emoji: string;
-  leftOption: {
+  optionA: {
     text: string;
     emoji: string;
+    category: string;
   };
-  rightOption: {
+  optionB: {
     text: string;
     emoji: string;
+    category: string;
   };
-  leftCategory: string;
-  rightCategory: string;
 }
 
 export interface Restaurant {
@@ -25,15 +25,11 @@ export interface Restaurant {
 }
 
 export interface FoodRecommendation {
-  name: string;
+  type: string;
+  title: string;
   description: string;
-  cuisine: string;
-  matchPercentage: number;
-  // Legacy properties for backward compatibility
-  type?: string;
-  title?: string;
-  emoji?: string;
-  suggestions?: string[];
+  emoji: string;
+  suggestions: string[];
   image?: string;
 }
 
@@ -58,7 +54,6 @@ export interface UserLocation {
   longitude: number;
   city?: string;
   postalCode?: string;
-  isManual?: boolean; // Flag to indicate manual vs GPS location
 }
 
 export interface UsageData {

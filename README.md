@@ -1,113 +1,73 @@
-# What Should We Eat - Core API
+# Welcome to your Lovable project
 
-Private backend API for the What Should We Eat application.
+## Project info
 
-## Setup
+**URL**: https://lovable.dev/projects/a0cef393-a146-4807-88c9-84c229c3982b
 
-1. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+## How can I edit this code?
 
-2. **Environment variables**:
-   Copy `.env.example` to `.env` and fill in your API keys:
-   ```bash
-   cp .env.example .env
-   ```
+There are several ways of editing your application.
 
-3. **Required API Keys**:
-   - OpenAI API key for AI recommendations
-   - Google Maps API key for restaurant search
+**Use Lovable**
 
-## Development
+Simply visit the [Lovable Project](https://lovable.dev/projects/a0cef393-a146-4807-88c9-84c229c3982b) and start prompting.
 
-```bash
+Changes made via Lovable will be committed automatically to this repo.
+
+**Use your preferred IDE**
+
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+
+The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+
+Follow these steps:
+
+```sh
+# Step 1: Clone the repository using the project's Git URL.
+git clone <YOUR_GIT_URL>
+
+# Step 2: Navigate to the project directory.
+cd <YOUR_PROJECT_NAME>
+
+# Step 3: Install the necessary dependencies.
+npm i
+
+# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
 
-This starts the Vercel development server at `http://localhost:3000`
+**Edit a file directly in GitHub**
 
-## API Endpoints
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
 
-### POST /api/recommend
-Generate food recommendations based on user answers.
+**Use GitHub Codespaces**
 
-**Request body**:
-```json
-{
-  "answers": {
-    "spice-level": "left",
-    "meal-size": "right"
-  }
-}
-```
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
 
-### POST /api/restaurants
-Find nearby restaurants based on location and cuisine.
+## What technologies are used for this project?
 
-**Request body**:
-```json
-{
-  "cuisineType": "italian",
-  "location": {
-    "latitude": 40.7128,
-    "longitude": -74.0060
-  },
-  "preferences": {
-    "radius": 5000
-  }
-}
-```
+This project is built with:
 
-### POST /api/generate-question
-Generate dynamic quiz questions using AI.
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
 
-**Request body**:
-```json
-{
-  "previousAnswers": {},
-  "questionIndex": 1
-}
-```
+## How can I deploy this project?
 
-### POST /api/track-usage
-Track user sessions for analytics.
+Simply open [Lovable](https://lovable.dev/projects/a0cef393-a146-4807-88c9-84c229c3982b) and click on Share -> Publish.
 
-**Request body**:
-```json
-{
-  "sessionData": {
-    "sessionId": "session_123",
-    "answers": {},
-    "timestamp": 1234567890
-  }
-}
-```
+## Can I connect a custom domain to my Lovable project?
 
-## Deployment
+Yes, you can!
 
-Deploy to Vercel:
-```bash
-npm run deploy
-```
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-## Project Structure
-
-```
-├── api/                 # Vercel serverless functions
-│   ├── recommend.ts
-│   ├── restaurants.ts
-│   └── generate-question.ts
-├── src/
-│   ├── services/        # Business logic
-│   ├── data/           # Static data
-│   ├── types/          # TypeScript interfaces
-│   └── hooks/          # Reusable logic
-└── .env.example        # Environment variables template
-```
-
-## Security
-
-- All API keys are stored in environment variables
-- CORS is configured for the public UI domain only
-- Rate limiting is implemented for API endpoints
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)

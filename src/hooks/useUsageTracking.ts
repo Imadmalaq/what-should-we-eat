@@ -1,48 +1,50 @@
-import { useCallback } from 'react';
+import { useState, useEffect } from 'react';
+import { UsageData } from '@/types/app';
 
-interface UsageData {
-  sessionId: string;
-  answers: Record<string, string>;
-  recommendation?: any;
-  timestamp: number;
-  location?: {
-    latitude: number;
-    longitude: number;
-  };
-}
+const STORAGE_KEY = 'whatShouldWeEat_usage';
+const FREE_USAGE_LIMIT = 3;
 
-export const useUsageTracking = () => {
-  const trackSession = useCallback(async (data: UsageData) => {
-    try {
-      const response = await fetch('/api/track-usage', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          sessionData: {
-            ...data,
-            userAgent: navigator.userAgent,
-          }
-        }),
-      });
+export function useUsageTracking() {
+  const [usageData, setUsageData] = useState<UsageData>({ count: 0, lastUsed: '' });
+  const [canUse, setCanUse] = useState(true);
 
-      if (!response.ok) {
-        throw new Error('Failed to track usage');
-      }
-
-      console.log('Usage tracked successfully');
-    } catch (error) {
-      console.error('Usage tracking failed:', error);
+  useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const data = JSON.parse(stored);
+      setUsageData(data);
+      setCanUse(data.count < FREE_USAGE_LIMIT);
     }
   }, []);
 
-  const generateSessionId = useCallback(() => {
-    return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  }, []);
+  const incrementUsage = () => {
+    const newUsageData = {
+      count: usageData.count + 1,
+      lastUsed: new Date().toISOString()
+    };
+    
+    setUsageData(newUsageData);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newUsageData));
+    setCanUse(newUsageData.count < FREE_USAGE_LIMIT);
+  };
+
+  const getRemainingUses = () => {
+    return Math.max(0, FREE_USAGE_LIMIT - usageData.count);
+  };
+
+  const resetUsage = () => {
+    const resetData = { count: 0, lastUsed: '' };
+    setUsageData(resetData);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(resetData));
+    setCanUse(true);
+  };
 
   return {
-    trackSession,
-    generateSessionId,
+    usageData,
+    canUse,
+    remainingUses: getRemainingUses(),
+    incrementUsage,
+    resetUsage,
+    isAtLimit: usageData.count >= FREE_USAGE_LIMIT
   };
-};
+}
