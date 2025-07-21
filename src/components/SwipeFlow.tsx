@@ -144,49 +144,38 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
           <SwipeCard
             onSwipeLeft={handleSwipeLeft}
             onSwipeRight={handleSwipeRight}
-            className="shadow-warm border-2 border-border/50"
+            className="shadow-warm border-2 border-border/50 bg-card"
           >
-            <div className="grid grid-cols-2 h-full min-h-[200px]">
-              {/* Left Option */}
-              <div className="flex flex-col items-center justify-center p-4 bg-red-50/30 border-r border-border/30 rounded-l-lg">
-                <div className="text-4xl mb-3">{question.optionA.emoji}</div>
-                <p className="font-medium text-center text-sm leading-tight text-foreground">
-                  {question.optionA.text}
-                </p>
-                <div className="mt-3 text-xs text-red-600 font-medium opacity-75">
-                  ← Swipe left
+            <div className="space-y-8 text-center p-2">
+              {/* Option A (Left) */}
+              <div className="relative group">
+                <div className="absolute -left-6 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="text-xs text-muted-foreground">👈</div>
+                </div>
+                <div className="p-4 rounded-xl bg-gradient-to-r from-orange-50/50 to-transparent hover:from-orange-100/50 transition-all">
+                  <div className="text-4xl mb-2">{question.optionA.emoji}</div>
+                  <p className="font-medium text-foreground leading-snug">
+                    {question.optionA.text}
+                  </p>
                 </div>
               </div>
 
-              {/* Right Option */}
-              <div className="flex flex-col items-center justify-center p-4 bg-green-50/30 rounded-r-lg">
-                <div className="text-4xl mb-3">{question.optionB.emoji}</div>
-                <p className="font-medium text-center text-sm leading-tight text-foreground">
-                  {question.optionB.text}
-                </p>
-                <div className="mt-3 text-xs text-green-600 font-medium opacity-75">
-                  Swipe right →
+              <div className="text-lg text-muted-foreground/50">or</div>
+
+              {/* Option B (Right) */}
+              <div className="relative group">
+                <div className="absolute -right-6 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="text-xs text-muted-foreground">👉</div>
+                </div>
+                <div className="p-4 rounded-xl bg-gradient-to-l from-green-50/50 to-transparent hover:from-green-100/50 transition-all">
+                  <div className="text-4xl mb-2">{question.optionB.emoji}</div>
+                  <p className="font-medium text-foreground leading-snug">
+                    {question.optionB.text}
+                  </p>
                 </div>
               </div>
             </div>
           </SwipeCard>
-        </div>
-
-        {/* Swipe Instructions - Left and Right */}
-        <div className="flex justify-between items-center px-8">
-          <div className="text-center space-y-2 opacity-60">
-            <div className="w-8 h-8 bg-red-500/20 rounded-full flex items-center justify-center">
-              <ArrowLeft className="w-4 h-4 text-red-500" />
-            </div>
-            <div className="text-xs text-red-500 font-medium">Option A</div>
-          </div>
-          
-          <div className="text-center space-y-2 opacity-60">
-            <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
-              <ArrowRight className="w-4 h-4 text-green-500" />
-            </div>
-            <div className="text-xs text-green-500 font-medium">Option B</div>
-          </div>
         </div>
       </div>
     </div>
