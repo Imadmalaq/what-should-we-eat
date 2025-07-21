@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { FoodRecommendation, RestaurantRecommendation } from '@/types/app';
 import { MapPin, ExternalLink, Share, Heart, RotateCcw, Navigation, Home } from 'lucide-react';
+import { RestaurantMap } from './RestaurantMap';
 
 interface FoodResultProps {
   result: FoodRecommendation;
@@ -98,12 +99,24 @@ export function FoodResult({ result, restaurant, onRestart }: FoodResultProps) {
                         Order on Uber Eats
                       </Button>
                     )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+                   </div>
+                 </div>
+               </CardContent>
+             </Card>
+
+             {/* Restaurant Map */}
+             {restaurant.coordinates && (
+               <div className="animate-fade-in">
+                 <RestaurantMap
+                   lat={restaurant.coordinates.lat}
+                   lng={restaurant.coordinates.lng}
+                   name={restaurant.name}
+                   address={restaurant.address}
+                 />
+               </div>
+             )}
+           </div>
+         )}
 
         {/* No Restaurant Fallback */}
         {!restaurant && (

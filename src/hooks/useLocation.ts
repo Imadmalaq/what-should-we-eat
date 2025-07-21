@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import { UserLocation } from '@/types/app';
+import { reverseGeocodeCity } from '@/utils/geocoding';
+import { useToast } from '@/hooks/use-toast';
 
 export function useLocation() {
   const [location, setLocation] = useState<UserLocation | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const requestLocation = async () => {
     if (!navigator.geolocation) {
@@ -16,28 +19,30 @@ export function useLocation() {
     setError(null);
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
         console.log('Geolocation success:', position.coords);
-        // Reverse geocode the coordinates to get city name
-        reverseGeocode(position.coords.latitude, position.coords.longitude)
-          .then(cityName => {
-            setLocation({
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-              city: cityName,
-              isManualInput: false
-            });
-            setLoading(false);
-          })
-          .catch(err => {
-            console.warn('Reverse geocoding failed, using coordinates only:', err);
-            setLocation({
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-              isManualInput: false
-            });
-            setLoading(false);
+        try {
+          // Reverse geocode the coordinates to get city name
+          const cityName = await reverseGeocodeCity(position.coords.latitude, position.coords.longitude);
+          console.log('Reverse geocoded city:', cityName);
+          
+          setLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            city: cityName,
+            isManualInput: false
           });
+          setLoading(false);
+        } catch (err) {
+          console.warn('Reverse geocoding failed:', err);
+          toast({
+            title: "Location Detection",
+            description: "Couldn't detect your city. Please enter it manually.",
+            variant: "destructive"
+          });
+          setError("Couldn't detect your city. Please enter it manually.");
+          setLoading(false);
+        }
       },
       (error) => {
         console.error('Geolocation error:', error);
@@ -52,19 +57,6 @@ export function useLocation() {
     );
   };
 
-  const reverseGeocode = async (lat: number, lng: number): Promise<string> => {
-    try {
-      // In production, this would use Google Geocoding API
-      // For now, use our existing coordinate-to-city mapping
-      const city = getCityFromCoordinates(lat, lng);
-      if (city && city !== 'Your City') {
-        return city;
-      }
-      throw new Error('Could not determine city from coordinates');
-    } catch (error) {
-      throw error;
-    }
-  };
 
   const getCityFromCoordinates = (lat: number, lng: number): string => {
     // Major cities by approximate coordinates (realistic ranges)

@@ -23,6 +23,12 @@ export class RestaurantService {
   ): Promise<RestaurantRecommendation | null> {
     
     try {
+      // Guard clause: ensure we have a valid city
+      if ((!location.city || location.city.trim() === '' || location.city === 'Your City') &&
+          (location.latitude === 0 && location.longitude === 0)) {
+        throw new Error('City unresolved—prompt manual entry');
+      }
+
       // In production, this would use Google Places API
       // For now, simulate API call with realistic restaurant data
       
