@@ -48,12 +48,12 @@ export class EnhancedAIQuestionService {
       }
     }
     
+    // Check if we have enough data and should end early
+    if (this.currentMealType && this.shouldEndQuizEarly(questionIndex)) {
+      throw new Error('QUIZ_COMPLETE'); // Signal to end quiz
+    }
+    
     try {
-      // Check if we have enough data and can end early
-      if (questionIndex >= 4 && this.currentMealType && hasEnoughDataForMealType(this.currentMealType, this.currentSessionAnswers)) {
-        console.log('AI Service - enough data collected, could end quiz early');
-      }
-      
       // Get next unused question from filtered bank
       const question = this.getNextFilteredQuestion();
       
@@ -68,6 +68,27 @@ export class EnhancedAIQuestionService {
       console.error('Error generating question:', error);
       throw error;
     }
+  }
+
+  private shouldEndQuizEarly(questionIndex: number): boolean {
+    if (!this.currentMealType) return false;
+    
+    const minQuestions = {
+      'ice-cream': 3,    // Simple choice - just sweetness, style, budget
+      'dessert': 4,      // Few options needed
+      'snacks': 4,       // Simple snack choice
+      'drinks': 4,       // Coffee vs cocktails vs other
+      'breakfast': 5,    // Bit more complex
+      'full-meal': 8     // Most complex, needs cuisine/spice/etc
+    };
+    
+    const minRequired = minQuestions[this.currentMealType];
+    const hasMinimumQuestions = questionIndex >= minRequired;
+    const hasBasicInfo = this.currentSessionAnswers.length >= minRequired;
+    
+    console.log(`Should end early? Questions: ${questionIndex}/${minRequired}, Answers: ${this.currentSessionAnswers.length}`);
+    
+    return hasMinimumQuestions && hasBasicInfo;
   }
 
   private extractMealType(answers: any[]): MealType | null {

@@ -111,10 +111,46 @@ export function SwipeFlow({ onComplete, mealType }: SwipeFlowProps) {
         }, 200);
       } catch (error) {
         console.error('Error generating next question:', error);
+        // Check if error indicates quiz should be complete
+        if (error instanceof Error && error.message === 'QUIZ_COMPLETE') {
+          // End quiz early - we have enough data
+          handleQuizComplete();
+          return;
+        }
         setIsGeneratingQuestion(false);
-        // Fallback - just move to next with a generic question
-        setCurrentQuestion(prev => prev + 1);
+        // Fallback - just move to next with a generic question or end quiz
+        handleQuizComplete();
       }
+    }
+  };
+
+  // Helper function to complete the quiz
+  const handleQuizComplete = () => {
+    console.log('Quiz complete with answers:', answers);
+    // Calculate final recommendation using enhanced algorithm with meal type
+    const foodType = calculateEnhancedRecommendation(answers, mealType);
+    const result = foodRecommendations[foodType] || foodRecommendations.surprise;
+    
+    // Get specific restaurant recommendation
+    findRestaurantAndComplete(result, foodType);
+  };
+
+  const findRestaurantAndComplete = async (result: FoodRecommendation, foodType: string) => {
+    try {
+      // Use manual location or fallback to default coordinates
+      const userLocation = location || { latitude: 0, longitude: 0, city: 'Your City' };
+      const restaurant = await restaurantService.findSpecificRestaurant(
+        foodType,
+        userLocation,
+        {
+          priceLevel: answers.budget ? 1 : answers.splurge ? 3 : 2,
+          transportMode: 'walking'
+        }
+      );
+      onComplete(result, restaurant || undefined);
+    } catch (error) {
+      console.error('Error finding restaurant:', error);
+      onComplete(result);
     }
   };
 
