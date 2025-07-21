@@ -3,10 +3,10 @@ import { Button } from '@/components/ui/button';
 import { SwipeCard } from '@/components/SwipeCard';
 import { Progress } from '@/components/ui/progress';
 import { foodRecommendations } from '@/data/swipeData';
-import { FoodRecommendation, SwipeQuestion, RestaurantRecommendation } from '@/types/app';
-import { EnhancedAIQuestionService, calculateEnhancedRecommendation } from '@/services/enhancedAiService';
-import { RestaurantService } from '@/services/restaurantService';
-import { useLocation } from '@/hooks/useLocation';
+import { FoodRecommendation, SwipeQuestion } from '@/types/app';
+import { calculateEnhancedRecommendation } from '@/services/enhancedAiService';
+import { AIQuestionService } from '@/services/aiQuestionService';
+import { ApiKeyInput } from '@/components/ApiKeyInput';
 import { MealType } from '@/components/MealTypeSelector';
 import { Heart, X, ArrowLeft, ArrowRight } from 'lucide-react';
 
@@ -20,33 +20,49 @@ export function SwipeFlow({ onComplete, mealType }: SwipeFlowProps) {
   const [answers, setAnswers] = useState<{ [key: string]: string }>({});
   const [questions, setQuestions] = useState<SwipeQuestion[]>([]);
   const [isGeneratingQuestion, setIsGeneratingQuestion] = useState(false);
+  const [showApiKeyInput, setShowApiKeyInput] = useState(true);
+  const [useAI, setUseAI] = useState(false);
   
-  const aiService = EnhancedAIQuestionService.getInstance();
-  const restaurantService = RestaurantService.getInstance();
-  const { location } = useLocation();
-  const totalQuestions = 10;
+  const aiService = AIQuestionService.getInstance();
+  const totalQuestions = 8;
 
-  // Generate first question on mount
-  useEffect(() => {
-    const initializeQuiz = async () => {
-      aiService.resetSession(); // Reset for new session
-      aiService.setMealType(mealType); // Set meal type for proper question filtering
-      setIsGeneratingQuestion(true);
-      try {
-        // Pass meal type to AI service for better question generation
-        const firstQuestion = await aiService.generateNextQuestion({ mealType }, 0);
-        setQuestions([firstQuestion]);
-      } catch (error) {
-        console.error('Error generating first question:', error);
-        // Fallback to a default question based on meal type
-        const fallbackQuestion = getMealTypeSpecificQuestion(mealType);
-        setQuestions([fallbackQuestion]);
-      }
-      setIsGeneratingQuestion(false);
-    };
-    
+  const handleApiKeySet = (apiKey: string) => {
+    aiService.setApiKey(apiKey);
+    setUseAI(true);
+    setShowApiKeyInput(false);
     initializeQuiz();
-  }, [mealType]);
+  };
+
+  const handleSkipApiKey = () => {
+    setUseAI(false);
+    setShowApiKeyInput(false);
+    initializeQuiz();
+  };
+
+  // Generate first question on component setup
+  const initializeQuiz = async () => {
+    aiService.resetSession();
+    setIsGeneratingQuestion(true);
+    try {
+      const firstQuestion = await aiService.generateQuestion({
+        mealType,
+        previousAnswers: [],
+        questionCount: 0,
+        totalQuestions
+      });
+      setQuestions([firstQuestion]);
+    } catch (error) {
+      console.error('Error generating first question:', error);
+      // Fallback to a default question based on meal type
+      const fallbackQuestion = getMealTypeSpecificQuestion(mealType);
+      setQuestions([fallbackQuestion]);
+    }
+    setIsGeneratingQuestion(false);
+  };
+
+  if (showApiKeyInput) {
+    return <ApiKeyInput onApiKeySet={handleApiKeySet} onSkip={handleSkipApiKey} />;
+  }
 
   if (questions.length === 0 || isGeneratingQuestion) {
     return <div className="min-h-screen bg-gradient-warm flex items-center justify-center">
@@ -87,7 +103,13 @@ export function SwipeFlow({ onComplete, mealType }: SwipeFlowProps) {
       // Generate next question based on current answers
       setIsGeneratingQuestion(true);
       try {
-        const nextQuestion = await aiService.generateNextQuestion(newAnswers, currentQuestion + 1);
+        const previousAnswers = Object.values(newAnswers);
+        const nextQuestion = await aiService.generateQuestion({
+          mealType,
+          previousAnswers,
+          questionCount: currentQuestion + 1,
+          totalQuestions
+        });
         setQuestions(prev => [...prev, nextQuestion]);
         setTimeout(() => {
           setCurrentQuestion(prev => prev + 1);
@@ -95,14 +117,7 @@ export function SwipeFlow({ onComplete, mealType }: SwipeFlowProps) {
         }, 200);
       } catch (error) {
         console.error('Error generating next question:', error);
-        // Check if error indicates quiz should be complete
-        if (error instanceof Error && error.message === 'QUIZ_COMPLETE') {
-          // End quiz early - we have enough data
-          handleQuizComplete();
-          return;
-        }
-        setIsGeneratingQuestion(false);
-        // Fallback - just move to next with a generic question or end quiz
+        // End quiz early if we can't generate more questions
         handleQuizComplete();
       }
     }

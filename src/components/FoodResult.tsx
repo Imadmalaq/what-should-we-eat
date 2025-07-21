@@ -15,14 +15,25 @@ interface FoodResultProps {
 import { RestaurantService } from '@/services/restaurantService';
 
 export function FoodResult({ result, onRestart }: FoodResultProps) {
+  // Extract clean food type from result title
+  const extractFoodType = (title: string): string => {
+    // Remove emojis, exclamation marks, and common descriptive words
+    return title
+      .replace(/[🌶️🍕🍜🥘🍛🍝🥗🍲🥙🌮🌯🍤🍣🍱🍙🥟🍳🥞🧇🥓🥨🧀🥪🌭🍔🍟🥐🥖🍞🎂🍰🧁🍪🍩🍫🍬🍭🍮🍯🍼☕🫖🍵🥤🧃🥛🍺🍻🥂🍷🥃🍸🍹🍾🧊]/g, '') // Remove food emojis
+      .replace(/[!?.,]/g, '') // Remove punctuation
+      .replace(/\b(adventure|delight|experience|craving|mood|vibes?|time|tonight|today)\b/gi, '') // Remove descriptive words
+      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+      .trim();
+  };
+
   const handleFindNearby = () => {
-    const searchQuery = `${result.title} near me`;
-    window.open(`https://www.google.com/maps/search/${encodeURIComponent(searchQuery)}`, '_blank');
+    const cleanFoodType = extractFoodType(result.title);
+    window.open(`https://www.google.com/maps/search/${encodeURIComponent(cleanFoodType)}`, '_blank');
   };
 
   const handleOrderUberEats = () => {
-    const searchQuery = result.title;
-    window.open(`https://www.ubereats.com/search?q=${encodeURIComponent(searchQuery)}`, '_blank');
+    const cleanFoodType = extractFoodType(result.title);
+    window.open(`https://www.ubereats.com/search?q=${encodeURIComponent(cleanFoodType)}`, '_blank');
   };
 
   const [isSharing, setIsSharing] = useState(false);
