@@ -14,7 +14,7 @@ export class EnhancedAIQuestionService {
   }
 
   async generateNextQuestion(
-    previousAnswers: { [key: string]: string },
+    previousAnswers: { [key: string]: string | any },
     questionIndex: number
   ): Promise<SwipeQuestion> {
     const answerHistory = Object.values(previousAnswers);
@@ -37,7 +37,12 @@ export class EnhancedAIQuestionService {
     return question;
   }
 
-  private getContextualQuestion(previousAnswers: string[], questionIndex: number) {
+  private getContextualQuestion(previousAnswers: any[], questionIndex: number) {
+    // Extract meal type from answers
+    const mealType = previousAnswers.find(answer => 
+      typeof answer === 'string' && ['full-meal', 'breakfast', 'dessert', 'snacks', 'ice-cream', 'drinks'].includes(answer)
+    );
+    
     const hasComfort = previousAnswers.includes('comfort');
     const hasAdventurous = previousAnswers.includes('adventurous');
     const hasSpicy = previousAnswers.includes('spicy');
@@ -51,27 +56,8 @@ export class EnhancedAIQuestionService {
 
     // More comprehensive question bank with 10+ questions
     const questionBanks = {
-      // Opening questions (0-1)
-      opening: [
-        {
-          question: "What's your current mood?",
-          emoji: "😊",
-          optionA: { text: "Relaxed and cozy", emoji: "😌", category: "comfort" },
-          optionB: { text: "Energetic and bold", emoji: "⚡", category: "adventurous" }
-        },
-        {
-          question: "How much effort do you want to put in?",
-          emoji: "🎯",
-          optionA: { text: "Minimal effort, maximum comfort", emoji: "🛋️", category: "easy" },
-          optionB: { text: "I'm up for something special", emoji: "✨", category: "special" }
-        },
-        {
-          question: "What's driving your hunger?",
-          emoji: "🤔",
-          optionA: { text: "I need comfort food", emoji: "🤗", category: "comfort" },
-          optionB: { text: "I want to try something new", emoji: "🚀", category: "adventurous" }
-        }
-      ],
+      // Opening questions (0-1) - adapted for meal type
+      opening: this.getMealTypeQuestions(mealType),
 
       // Cultural exploration (2-3)
       cultural: [
@@ -229,6 +215,97 @@ export class EnhancedAIQuestionService {
     }
 
     return selectedQuestion;
+  }
+
+  private getMealTypeQuestions(mealType?: string) {
+    const baseQuestions = {
+      'full-meal': [
+        {
+          question: "What's your current mood for this meal?",
+          emoji: "🍽️",
+          optionA: { text: "Relaxed and cozy", emoji: "😌", category: "comfort" },
+          optionB: { text: "Energetic and bold", emoji: "⚡", category: "adventurous" }
+        },
+        {
+          question: "How much culinary adventure are you seeking?",
+          emoji: "🌟",
+          optionA: { text: "Familiar and satisfying", emoji: "🤗", category: "familiar" },
+          optionB: { text: "Something new and exciting", emoji: "🚀", category: "adventurous" }
+        }
+      ],
+      'breakfast': [
+        {
+          question: "How do you want to start your day?",
+          emoji: "🌅",
+          optionA: { text: "Light and energizing", emoji: "🥗", category: "healthy" },
+          optionB: { text: "Hearty and filling", emoji: "🥞", category: "comfort" }
+        },
+        {
+          question: "Morning vibe check?",
+          emoji: "☀️",
+          optionA: { text: "Quick and efficient", emoji: "⚡", category: "quick" },
+          optionB: { text: "Leisurely and indulgent", emoji: "🛋️", category: "leisurely" }
+        }
+      ],
+      'dessert': [
+        {
+          question: "What kind of sweet satisfaction are you craving?",
+          emoji: "🍰",
+          optionA: { text: "Rich and indulgent", emoji: "🍫", category: "indulgent" },
+          optionB: { text: "Light and refreshing", emoji: "🍓", category: "light" }
+        },
+        {
+          question: "Temperature preference for your sweet treat?",
+          emoji: "🌡️",
+          optionA: { text: "Cool and refreshing", emoji: "🧊", category: "cold" },
+          optionB: { text: "Warm and comforting", emoji: "☕", category: "hot" }
+        }
+      ],
+      'snacks': [
+        {
+          question: "What kind of snack experience are you after?",
+          emoji: "🥨",
+          optionA: { text: "Crunchy and satisfying", emoji: "🥜", category: "crunchy" },
+          optionB: { text: "Soft and comforting", emoji: "🍪", category: "soft" }
+        },
+        {
+          question: "Flavor profile for your snack?",
+          emoji: "🎯",
+          optionA: { text: "Savory and salty", emoji: "🧂", category: "savory" },
+          optionB: { text: "Sweet and delightful", emoji: "🍯", category: "sweet" }
+        }
+      ],
+      'ice-cream': [
+        {
+          question: "What frozen treat experience sounds perfect?",
+          emoji: "🍦",
+          optionA: { text: "Classic and creamy", emoji: "🍨", category: "classic" },
+          optionB: { text: "Unique and adventurous", emoji: "🍧", category: "adventurous" }
+        },
+        {
+          question: "Texture preference for your frozen treat?",
+          emoji: "🥄",
+          optionA: { text: "Smooth and rich", emoji: "🥛", category: "creamy" },
+          optionB: { text: "Mix-ins and crunch", emoji: "🍪", category: "textured" }
+        }
+      ],
+      'drinks': [
+        {
+          question: "What's the vibe you're going for?",
+          emoji: "☕",
+          optionA: { text: "Cozy café atmosphere", emoji: "📚", category: "cozy" },
+          optionB: { text: "Social bar scene", emoji: "🍸", category: "social" }
+        },
+        {
+          question: "Energy level preference?",
+          emoji: "⚡",
+          optionA: { text: "Caffeinated and energizing", emoji: "☕", category: "energizing" },
+          optionB: { text: "Relaxing and smooth", emoji: "🍷", category: "relaxing" }
+        }
+      ]
+    };
+
+    return baseQuestions[mealType as keyof typeof baseQuestions] || baseQuestions['full-meal'];
   }
 
   private getRandomUnusedQuestion(questions: any[]) {

@@ -7,13 +7,15 @@ import { FoodRecommendation, SwipeQuestion, RestaurantRecommendation } from '@/t
 import { EnhancedAIQuestionService, calculateEnhancedRecommendation } from '@/services/enhancedAiService';
 import { RestaurantService } from '@/services/restaurantService';
 import { useLocation } from '@/hooks/useLocation';
+import { MealType } from '@/components/MealTypeSelector';
 import { Heart, X, ArrowLeft, ArrowRight } from 'lucide-react';
 
 interface SwipeFlowProps {
   onComplete: (result: FoodRecommendation, restaurant?: RestaurantRecommendation) => void;
+  mealType: MealType;
 }
 
-export function SwipeFlow({ onComplete }: SwipeFlowProps) {
+export function SwipeFlow({ onComplete, mealType }: SwipeFlowProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<{ [key: string]: string }>({});
   const [questions, setQuestions] = useState<SwipeQuestion[]>([]);
@@ -30,24 +32,20 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
       aiService.resetSession(); // Reset for new session
       setIsGeneratingQuestion(true);
       try {
-        const firstQuestion = await aiService.generateNextQuestion({}, 0);
+        // Pass meal type to AI service for better question generation
+        const firstQuestion = await aiService.generateNextQuestion({ mealType }, 0);
         setQuestions([firstQuestion]);
       } catch (error) {
         console.error('Error generating first question:', error);
-        // Fallback to a default question
-        setQuestions([{
-          id: 'fallback_1',
-          question: "What's your current mood?",
-          emoji: "😊",
-          optionA: { text: "Relaxed and cozy", emoji: "😌", category: "comfort" },
-          optionB: { text: "Energetic and bold", emoji: "⚡", category: "adventurous" }
-        }]);
+        // Fallback to a default question based on meal type
+        const fallbackQuestion = getMealTypeSpecificQuestion(mealType);
+        setQuestions([fallbackQuestion]);
       }
       setIsGeneratingQuestion(false);
     };
     
     initializeQuiz();
-  }, []);
+  }, [mealType]);
 
   if (questions.length === 0 || isGeneratingQuestion) {
     return <div className="min-h-screen bg-gradient-warm flex items-center justify-center">
@@ -73,7 +71,8 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
   const handleAnswer = async (category: string) => {
     const newAnswers = {
       ...answers,
-      [question.id]: category
+      [question.id]: category,
+      mealType // Include meal type in answers for recommendation algorithm
     };
     setAnswers(newAnswers);
 
@@ -84,9 +83,11 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
       
       // Get specific restaurant recommendation
       try {
+        // Use manual location or fallback to default coordinates
+        const userLocation = location || { latitude: 0, longitude: 0, city: 'Your City' };
         const restaurant = await restaurantService.findSpecificRestaurant(
           foodType,
-          location || { latitude: 46.2044, longitude: 6.1432 }, // Default to Geneva center
+          userLocation,
           {
             priceLevel: newAnswers.budget ? 1 : newAnswers.splurge ? 3 : 2,
             transportMode: 'walking'
@@ -114,6 +115,56 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
         setCurrentQuestion(prev => prev + 1);
       }
     }
+  };
+
+  // Helper function to get meal type specific fallback questions
+  const getMealTypeSpecificQuestion = (mealType: MealType) => {
+    const questionMap = {
+      'full-meal': {
+        id: 'fallback_meal',
+        question: "What's your current mood for a meal?",
+        emoji: "🍽️",
+        optionA: { text: "Relaxed and cozy", emoji: "😌", category: "comfort" },
+        optionB: { text: "Energetic and bold", emoji: "⚡", category: "adventurous" }
+      },
+      'breakfast': {
+        id: 'fallback_breakfast',
+        question: "How do you want to start your day?",
+        emoji: "🌅",
+        optionA: { text: "Light and healthy", emoji: "🥗", category: "healthy" },
+        optionB: { text: "Hearty and filling", emoji: "🥞", category: "comfort" }
+      },
+      'dessert': {
+        id: 'fallback_dessert',
+        question: "What kind of sweet treat sounds good?",
+        emoji: "🍰",
+        optionA: { text: "Rich and indulgent", emoji: "🍫", category: "indulgent" },
+        optionB: { text: "Light and refreshing", emoji: "🍓", category: "light" }
+      },
+      'snacks': {
+        id: 'fallback_snacks',
+        question: "What kind of snack are you craving?",
+        emoji: "🥨",
+        optionA: { text: "Crunchy and savory", emoji: "🥜", category: "savory" },
+        optionB: { text: "Sweet and soft", emoji: "🍪", category: "sweet" }
+      },
+      'ice-cream': {
+        id: 'fallback_icecream',
+        question: "What frozen treat sounds perfect?",
+        emoji: "🍦",
+        optionA: { text: "Classic and creamy", emoji: "🍨", category: "classic" },
+        optionB: { text: "Unique and adventurous", emoji: "🍧", category: "adventurous" }
+      },
+      'drinks': {
+        id: 'fallback_drinks',
+        question: "What's the vibe you're going for?",
+        emoji: "☕",
+        optionA: { text: "Cozy café atmosphere", emoji: "📚", category: "cozy" },
+        optionB: { text: "Social bar scene", emoji: "🍸", category: "social" }
+      }
+    };
+    
+    return questionMap[mealType];
   };
 
   return (

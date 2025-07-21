@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MapPin, Loader2 } from 'lucide-react';
 import { useLocation } from '@/hooks/useLocation';
+import { LocationAutocomplete } from '@/components/LocationAutocomplete';
 
 interface LocationPromptProps {
   onLocationSet: () => void;
@@ -14,12 +14,9 @@ export function LocationPrompt({ onLocationSet }: LocationPromptProps) {
   const [manualCity, setManualCity] = useState('');
   const [showManualInput, setShowManualInput] = useState(false);
 
-  const handleManualSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (manualCity.trim()) {
-      setManualLocation(manualCity.trim());
-      onLocationSet();
-    }
+  const handleLocationSelect = (city: string) => {
+    setManualLocation(city);
+    onLocationSet();
   };
 
   const handleLocationRequest = async () => {
@@ -85,34 +82,19 @@ export function LocationPrompt({ onLocationSet }: LocationPromptProps) {
               </div>
             </>
           ) : (
-            <form onSubmit={handleManualSubmit} className="space-y-4">
-              <div>
-                <Input
-                  type="text"
-                  placeholder="Enter your city"
-                  value={manualCity}
-                  onChange={(e) => setManualCity(e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setShowManualInput(false)}
-                  className="flex-1"
-                >
-                  Back
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={!manualCity.trim()}
-                  className="flex-1"
-                >
-                  Continue
-                </Button>
-              </div>
-            </form>
+            <div className="space-y-4">
+              <LocationAutocomplete 
+                onLocationSelect={handleLocationSelect}
+                placeholder="Search for your city..."
+              />
+              <Button
+                variant="outline"
+                onClick={() => setShowManualInput(false)}
+                className="w-full"
+              >
+                Back to GPS location
+              </Button>
+            </div>
           )}
 
           <div className="text-center">
