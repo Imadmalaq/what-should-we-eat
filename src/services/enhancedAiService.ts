@@ -1,12 +1,12 @@
 import { SwipeQuestion } from '@/types/app';
 import { MealType } from '@/components/MealTypeSelector';
-import { questionBank, getQuestionsForMealType, hasEnoughDataForMealType } from '@/data/questionBank';
+import { questionBank, type QuestionBankItem, getQuestionsForMealType, hasEnoughDataForMealType } from '@/data/questionBank';
 
 export class EnhancedAIQuestionService {
   private static instance: EnhancedAIQuestionService;
   private questionHistory: string[] = [];
   private currentSessionAnswers: any[] = [];
-  private availableQuestions: any[] = [];
+  private availableQuestions: QuestionBankItem[] = [];
   private currentMealType: MealType | null = null;
 
   static getInstance(): EnhancedAIQuestionService {
@@ -23,6 +23,20 @@ export class EnhancedAIQuestionService {
     this.currentMealType = null;
   }
 
+  setMealType(mealType: MealType) {
+    this.currentMealType = mealType;
+    // Filter questions by meal type and sort by priority
+    this.availableQuestions = questionBank
+      .filter(q => q.mealTypes.includes(mealType))
+      .sort((a, b) => a.priority - b.priority); // Sort by priority (1 = high, 3 = low)
+    
+    // Add randomization within priority groups
+    this.availableQuestions = this.shuffleWithinPriorities(this.availableQuestions);
+    
+    console.log(`AI Service - filtered ${this.availableQuestions.length} questions for meal type: ${mealType}`);
+    console.log('Available questions:', this.availableQuestions.map(q => q.question));
+  }
+
   async generateNextQuestion(currentAnswers: any, questionIndex: number): Promise<SwipeQuestion> {
     this.currentSessionAnswers = Array.isArray(currentAnswers) ? currentAnswers : Object.values(currentAnswers);
     
@@ -30,8 +44,7 @@ export class EnhancedAIQuestionService {
     if (!this.currentMealType) {
       this.currentMealType = this.extractMealType(this.currentSessionAnswers);
       if (this.currentMealType) {
-        this.availableQuestions = this.shuffleArray(getQuestionsForMealType(this.currentMealType));
-        console.log('AI Service - initialized questions for meal type:', this.currentMealType, 'available:', this.availableQuestions.length);
+        this.setMealType(this.currentMealType);
       }
     }
     
@@ -43,9 +56,6 @@ export class EnhancedAIQuestionService {
       
       // Get next unused question from filtered bank
       const question = this.getNextFilteredQuestion();
-      
-      // Add to history to avoid repeats
-      this.questionHistory.push(question.question);
       
       return {
         id: question.id || `q_${questionIndex}`,
@@ -99,6 +109,25 @@ export class EnhancedAIQuestionService {
     return nextQuestion;
   }
 
+  private shuffleWithinPriorities(questions: QuestionBankItem[]): QuestionBankItem[] {
+    const grouped = questions.reduce((acc, q) => {
+      const priority = q.priority;
+      if (!acc[priority]) acc[priority] = [];
+      acc[priority].push(q);
+      return acc;
+    }, {} as { [key: number]: QuestionBankItem[] });
+
+    // Shuffle within each priority group
+    Object.keys(grouped).forEach(priority => {
+      grouped[Number(priority)] = this.shuffleArray(grouped[Number(priority)]);
+    });
+
+    // Flatten back in priority order
+    return Object.keys(grouped)
+      .sort((a, b) => Number(a) - Number(b))
+      .flatMap(priority => grouped[Number(priority)]);
+  }
+
   private shuffleArray(array: any[]): any[] {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -129,17 +158,17 @@ export function calculateEnhancedRecommendation(answers: { [key: string]: string
     if (categories.includes('light') || categories.includes('healthy')) {
       return 'sorbet';
     }
-    if (categories.includes('adventurous')) {
+    if (categories.includes('adventurous') || categories.includes('unique')) {
       return 'exotic-ice-cream';
     }
     return 'ice-cream'; // default ice cream
   }
   
   if (mealType === 'dessert') {
-    if (categories.includes('indulgent') || categories.includes('chocolate')) {
+    if (categories.includes('indulgent') || categories.includes('very_sweet')) {
       return 'chocolate-dessert';
     }
-    if (categories.includes('light') || categories.includes('fruit')) {
+    if (categories.includes('light') || categories.includes('lightly_sweet')) {
       return 'fruit-dessert';
     }
     return 'cake';
@@ -149,8 +178,11 @@ export function calculateEnhancedRecommendation(answers: { [key: string]: string
     if (categories.includes('healthy') || categories.includes('light')) {
       return 'healthy-breakfast';
     }
-    if (categories.includes('comfort') || categories.includes('hearty')) {
+    if (categories.includes('leisurely') || categories.includes('comfort')) {
       return 'hearty-breakfast';
+    }
+    if (categories.includes('quick')) {
+      return 'continental-breakfast';
     }
     return 'continental-breakfast';
   }
@@ -159,17 +191,20 @@ export function calculateEnhancedRecommendation(answers: { [key: string]: string
     if (categories.includes('savory') || categories.includes('crunchy')) {
       return 'savory-snacks';
     }
-    if (categories.includes('sweet')) {
+    if (categories.includes('sweet') || categories.includes('soft')) {
       return 'sweet-snacks';
     }
     return 'mixed-snacks';
   }
   
   if (mealType === 'drinks') {
-    if (categories.includes('alcohol') || categories.includes('cocktail')) {
+    if (categories.includes('social') || categories.includes('evening')) {
       return 'cocktails';
     }
-    if (categories.includes('caffeine') || categories.includes('coffee')) {
+    if (categories.includes('caffeinated') || categories.includes('morning')) {
+      return 'coffee';
+    }
+    if (categories.includes('cozy')) {
       return 'coffee';
     }
     return 'beverages';
@@ -178,100 +213,100 @@ export function calculateEnhancedRecommendation(answers: { [key: string]: string
   // Full meal logic (existing logic for backward compatibility)
   if (!mealType || mealType === 'full-meal') {
     // Much more comprehensive food mapping
-  const foodMapping = [
-    // Japanese/Asian specific
-    { conditions: ['japanese', 'elegant'], foods: ['sushi'], weight: 5 },
-    { conditions: ['southeast_asian', 'spicy'], foods: ['thai'], weight: 5 },
-    { conditions: ['asian', 'hot'], foods: ['ramen', 'chinese'], weight: 4 },
-    { conditions: ['asian', 'vegetarian'], foods: ['vietnamese'], weight: 4 },
-    
-    // European specific
-    { conditions: ['italian', 'comfort'], foods: ['italian'], weight: 5 },
-    { conditions: ['mediterranean', 'healthy'], foods: ['mediterranean'], weight: 5 },
-    { conditions: ['greek', 'fresh'], foods: ['mediterranean'], weight: 4 },
-    
-    // Comfort combinations
-    { conditions: ['comfort', 'quick'], foods: ['pizza', 'burgers'], weight: 4 },
-    { conditions: ['classic_comfort'], foods: ['burgers', 'pizza'], weight: 4 },
-    { conditions: ['elevated_comfort'], foods: ['pizza', 'italian'], weight: 4 },
-    
-    // Spice levels
-    { conditions: ['balanced_spicy'], foods: ['thai', 'mexican', 'indian'], weight: 5 },
-    { conditions: ['extreme_spicy'], foods: ['indian', 'korean'], weight: 5 },
-    { conditions: ['spicy', 'adventurous'], foods: ['thai', 'indian', 'korean'], weight: 4 },
-    
-    // Health conscious
-    { conditions: ['healthy', 'vegetarian'], foods: ['mediterranean', 'vietnamese'], weight: 4 },
-    { conditions: ['healthy', 'light'], foods: ['sushi', 'vietnamese', 'mediterranean'], weight: 4 },
-    
-    // Budget considerations
-    { conditions: ['budget', 'quick'], foods: ['pizza', 'burgers', 'vietnamese'], weight: 3 },
-    { conditions: ['splurge', 'upscale'], foods: ['sushi', 'italian'], weight: 4 },
-    
-    // Temperature preferences
-    { conditions: ['hot', 'comfort'], foods: ['ramen', 'chinese', 'italian'], weight: 3 },
-    { conditions: ['cold', 'fresh'], foods: ['sushi', 'mediterranean'], weight: 3 },
-    
-    // Texture preferences
-    { conditions: ['creamy'], foods: ['italian', 'indian'], weight: 3 },
-    { conditions: ['crunchy'], foods: ['korean', 'mexican'], weight: 3 },
-    
-    // Dining style
-    { conditions: ['sharing', 'social'], foods: ['pizza', 'chinese', 'mexican'], weight: 2 },
-    { conditions: ['individual', 'experience'], foods: ['sushi', 'italian'], weight: 2 },
-    
-    // Fallback combinations
-    { conditions: ['adventurous'], foods: ['thai', 'korean', 'indian', 'vietnamese'], weight: 2 },
-    { conditions: ['familiar'], foods: ['pizza', 'burgers', 'italian'], weight: 2 },
-    { conditions: ['international'], foods: ['sushi', 'thai', 'indian', 'mexican'], weight: 2 }
-  ];
+    const foodMapping = [
+      // Japanese/Asian specific
+      { conditions: ['japanese', 'elegant'], foods: ['sushi'], weight: 5 },
+      { conditions: ['southeast_asian', 'spicy'], foods: ['thai'], weight: 5 },
+      { conditions: ['asian', 'hot'], foods: ['ramen', 'chinese'], weight: 4 },
+      { conditions: ['asian', 'vegetarian'], foods: ['vietnamese'], weight: 4 },
+      
+      // European specific
+      { conditions: ['italian', 'comfort'], foods: ['italian'], weight: 5 },
+      { conditions: ['mediterranean', 'healthy'], foods: ['mediterranean'], weight: 5 },
+      { conditions: ['greek', 'fresh'], foods: ['mediterranean'], weight: 4 },
+      
+      // Comfort combinations
+      { conditions: ['comfort', 'quick'], foods: ['pizza', 'burgers'], weight: 4 },
+      { conditions: ['classic_comfort'], foods: ['burgers', 'pizza'], weight: 4 },
+      { conditions: ['elevated_comfort'], foods: ['pizza', 'italian'], weight: 4 },
+      
+      // Spice levels
+      { conditions: ['balanced_spicy'], foods: ['thai', 'mexican', 'indian'], weight: 5 },
+      { conditions: ['extreme_spicy'], foods: ['indian', 'korean'], weight: 5 },
+      { conditions: ['spicy', 'adventurous'], foods: ['thai', 'indian', 'korean'], weight: 4 },
+      
+      // Health conscious
+      { conditions: ['healthy', 'vegetarian'], foods: ['mediterranean', 'vietnamese'], weight: 4 },
+      { conditions: ['healthy', 'light'], foods: ['sushi', 'vietnamese', 'mediterranean'], weight: 4 },
+      
+      // Budget considerations
+      { conditions: ['budget', 'quick'], foods: ['pizza', 'burgers', 'vietnamese'], weight: 3 },
+      { conditions: ['splurge', 'upscale'], foods: ['sushi', 'italian'], weight: 4 },
+      
+      // Temperature preferences
+      { conditions: ['hot', 'comfort'], foods: ['ramen', 'chinese', 'italian'], weight: 3 },
+      { conditions: ['cold', 'fresh'], foods: ['sushi', 'mediterranean'], weight: 3 },
+      
+      // Texture preferences
+      { conditions: ['creamy'], foods: ['italian', 'indian'], weight: 3 },
+      { conditions: ['crunchy'], foods: ['korean', 'mexican'], weight: 3 },
+      
+      // Dining style
+      { conditions: ['sharing', 'social'], foods: ['pizza', 'chinese', 'mexican'], weight: 2 },
+      { conditions: ['individual', 'experience'], foods: ['sushi', 'italian'], weight: 2 },
+      
+      // Fallback combinations
+      { conditions: ['adventurous'], foods: ['thai', 'korean', 'indian', 'vietnamese'], weight: 2 },
+      { conditions: ['familiar'], foods: ['pizza', 'burgers', 'italian'], weight: 2 },
+      { conditions: ['international'], foods: ['sushi', 'thai', 'indian', 'mexican'], weight: 2 }
+    ];
 
-  // Calculate food scores
-  const foodScores: { [key: string]: number } = {};
-  
-  foodMapping.forEach(mapping => {
-    const matchCount = mapping.conditions.filter(condition => 
-      categories.includes(condition)
-    ).length;
+    // Calculate food scores
+    const foodScores: { [key: string]: number } = {};
     
-    if (matchCount > 0) {
-      mapping.foods.forEach(food => {
-        foodScores[food] = (foodScores[food] || 0) + (matchCount * mapping.weight);
-      });
+    foodMapping.forEach(mapping => {
+      const matchCount = mapping.conditions.filter(condition => 
+        categories.includes(condition)
+      ).length;
+      
+      if (matchCount > 0) {
+        mapping.foods.forEach(food => {
+          foodScores[food] = (foodScores[food] || 0) + (matchCount * mapping.weight);
+        });
+      }
+    });
+
+    // Add controlled randomness to prevent repetition while still being logical
+    Object.keys(foodScores).forEach(food => {
+      // Smaller random factor to maintain logic while adding variety
+      foodScores[food] += Math.random() * 1.5;
+    });
+
+    // Boost variety by reducing scores of recently recommended foods
+    // (This would require storing recent recommendations in localStorage)
+    const recentRecommendations = getRecentRecommendations();
+    recentRecommendations.forEach(recentFood => {
+      if (foodScores[recentFood]) {
+        foodScores[recentFood] *= 0.7; // Reduce score by 30%
+      }
+    });
+
+    // Find the highest scoring food
+    const sortedFoods = Object.entries(foodScores)
+      .sort(([,a], [,b]) => b - a);
+
+    if (sortedFoods.length === 0) {
+      // Fallback to a diverse random selection
+      const fallbackFoods = ['sushi', 'thai', 'italian', 'mediterranean', 'indian', 'vietnamese', 'korean'];
+      return fallbackFoods[Math.floor(Math.random() * fallbackFoods.length)];
     }
-  });
 
-  // Add controlled randomness to prevent repetition while still being logical
-  Object.keys(foodScores).forEach(food => {
-    // Smaller random factor to maintain logic while adding variety
-    foodScores[food] += Math.random() * 1.5;
-  });
-
-  // Boost variety by reducing scores of recently recommended foods
-  // (This would require storing recent recommendations in localStorage)
-  const recentRecommendations = getRecentRecommendations();
-  recentRecommendations.forEach(recentFood => {
-    if (foodScores[recentFood]) {
-      foodScores[recentFood] *= 0.7; // Reduce score by 30%
-    }
-  });
-
-  // Find the highest scoring food
-  const sortedFoods = Object.entries(foodScores)
-    .sort(([,a], [,b]) => b - a);
-
-  if (sortedFoods.length === 0) {
-    // Fallback to a diverse random selection
-    const fallbackFoods = ['sushi', 'thai', 'italian', 'mediterranean', 'indian', 'vietnamese', 'korean'];
-    return fallbackFoods[Math.floor(Math.random() * fallbackFoods.length)];
-  }
-
-  const topFood = sortedFoods[0][0];
-  
-  // Store this recommendation to avoid repetition
-  storeRecommendation(topFood);
-  
-  return topFood;
+    const topFood = sortedFoods[0][0];
+    
+    // Store this recommendation to avoid repetition
+    storeRecommendation(topFood);
+    
+    return topFood;
   }
   
   // Fallback

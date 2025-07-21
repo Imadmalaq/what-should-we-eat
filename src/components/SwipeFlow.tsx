@@ -30,6 +30,7 @@ export function SwipeFlow({ onComplete, mealType }: SwipeFlowProps) {
   useEffect(() => {
     const initializeQuiz = async () => {
       aiService.resetSession(); // Reset for new session
+      aiService.setMealType(mealType); // Set meal type for proper question filtering
       setIsGeneratingQuestion(true);
       try {
         // Pass meal type to AI service for better question generation

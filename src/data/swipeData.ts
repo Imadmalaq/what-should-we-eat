@@ -287,6 +287,72 @@ export const foodRecommendations: { [key: string]: FoodRecommendation } = {
     emoji: '🍰',
     suggestions: ['Classic dessert', 'Celebration', 'Sweet treat']
   },
+  // Breakfast specific
+  'healthy-breakfast': {
+    type: 'healthy-breakfast',
+    title: 'Healthy Breakfast! 🥗',
+    description: 'Nutritious and energizing start to your day.',
+    emoji: '🥗',
+    suggestions: ['Nutritious', 'Energy boost', 'Fresh start']
+  },
+  'hearty-breakfast': {
+    type: 'hearty-breakfast',
+    title: 'Hearty Breakfast! 🥞',
+    description: 'Fill up with a satisfying, substantial breakfast.',
+    emoji: '🥞',
+    suggestions: ['Filling', 'Comfort food', 'Satisfying']
+  },
+  'continental-breakfast': {
+    type: 'continental-breakfast',
+    title: 'Continental Breakfast! 🥐',
+    description: 'Light European-style breakfast with pastries and coffee.',
+    emoji: '🥐',
+    suggestions: ['Light meal', 'European style', 'Quick option']
+  },
+  // Snacks specific
+  'savory-snacks': {
+    type: 'savory-snacks',
+    title: 'Savory Snacks! 🥨',
+    description: 'Crunchy, salty snacks to satisfy your cravings.',
+    emoji: '🥨',
+    suggestions: ['Crunchy', 'Salty', 'Satisfying']
+  },
+  'sweet-snacks': {
+    type: 'sweet-snacks',
+    title: 'Sweet Snacks! 🍪',
+    description: 'Delicious sweet treats for when you need a pick-me-up.',
+    emoji: '🍪',
+    suggestions: ['Sweet', 'Comforting', 'Energy boost']
+  },
+  'mixed-snacks': {
+    type: 'mixed-snacks',
+    title: 'Snack Mix! 🍿',
+    description: 'A variety of sweet and savory snacks to choose from.',
+    emoji: '🍿',
+    suggestions: ['Variety', 'Options', 'Mix and match']
+  },
+  // Drinks specific
+  cocktails: {
+    type: 'cocktails',
+    title: 'Craft Cocktails! 🍸',
+    description: 'Expertly mixed cocktails for a sophisticated experience.',
+    emoji: '🍸',
+    suggestions: ['Social drinking', 'Sophisticated', 'Evening vibes']
+  },
+  coffee: {
+    type: 'coffee',
+    title: 'Specialty Coffee! ☕',
+    description: 'Rich, aromatic coffee to fuel your day.',
+    emoji: '☕',
+    suggestions: ['Energy boost', 'Aromatic', 'Cozy atmosphere']
+  },
+  beverages: {
+    type: 'beverages',
+    title: 'Refreshing Drinks! 🥤',
+    description: 'Thirst-quenching beverages for any time of day.',
+    emoji: '🥤',
+    suggestions: ['Refreshing', 'Hydrating', 'Variety']
+  },
   surprise: {
     type: 'surprise',
     title: 'Surprise Me! 🎉',
