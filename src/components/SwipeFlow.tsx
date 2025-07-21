@@ -3,19 +3,19 @@ import { Button } from '@/components/ui/button';
 import { SwipeCard } from '@/components/SwipeCard';
 import { Progress } from '@/components/ui/progress';
 import { foodRecommendations } from '@/data/swipeData';
-import { FoodRecommendation, SwipeQuestion, RestaurantRecommendation, UserLocation } from '@/types/app';
+import { FoodRecommendation, SwipeQuestion, RestaurantRecommendation } from '@/types/app';
 import { EnhancedAIQuestionService, calculateEnhancedRecommendation } from '@/services/enhancedAiService';
 import { RestaurantService } from '@/services/restaurantService';
+import { useLocation } from '@/hooks/useLocation';
 import { MealType } from '@/components/MealTypeSelector';
 import { Heart, X, ArrowLeft, ArrowRight } from 'lucide-react';
 
 interface SwipeFlowProps {
   onComplete: (result: FoodRecommendation, restaurant?: RestaurantRecommendation, allRestaurants?: RestaurantRecommendation[]) => void;
   mealType: MealType;
-  location: UserLocation | null;
 }
 
-export function SwipeFlow({ onComplete, mealType, location }: SwipeFlowProps) {
+export function SwipeFlow({ onComplete, mealType }: SwipeFlowProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<{ [key: string]: string }>({});
   const [questions, setQuestions] = useState<SwipeQuestion[]>([]);
@@ -23,7 +23,7 @@ export function SwipeFlow({ onComplete, mealType, location }: SwipeFlowProps) {
   
   const aiService = EnhancedAIQuestionService.getInstance();
   const restaurantService = RestaurantService.getInstance();
-  
+  const { location } = useLocation();
   const totalQuestions = 10;
 
   // Generate first question on mount
@@ -84,15 +84,11 @@ export function SwipeFlow({ onComplete, mealType, location }: SwipeFlowProps) {
       
       // Get specific restaurant recommendation
       try {
-        if (!location) {
-          console.error('No location available for restaurant search');
-          onComplete(result);
-          return;
-        }
-        
+        // Use manual location or fallback to default coordinates
+        const userLocation = location || { latitude: 0, longitude: 0, city: 'Your City' };
         const restaurant = await restaurantService.findSpecificRestaurant(
           foodType,
-          location,
+          userLocation,
           {
             priceLevel: newAnswers.budget ? 1 : newAnswers.splurge ? 3 : 2,
             transportMode: 'walking'
@@ -141,14 +137,13 @@ export function SwipeFlow({ onComplete, mealType, location }: SwipeFlowProps) {
 
   const findRestaurantAndComplete = async (result: FoodRecommendation, foodType: string) => {
     try {
-      // Use the actual location set by user - don't override manual input!
-      const userLocation = location;
-      
-      if (!userLocation) {
-        console.error('No location available for restaurant search');
-        onComplete(result);
-        return;
-      }
+      // Use manual location or fallback to a realistic default location
+      const userLocation = location || { 
+        latitude: 46.2044, 
+        longitude: 6.1432, 
+        city: 'Geneva',
+        isManualInput: false 
+      };
       
       console.log('Using location for restaurant search:', userLocation);
       

@@ -7,7 +7,6 @@ import { MealTypeSelector, MealType } from '@/components/MealTypeSelector';
 import { PaywallModal } from '@/components/PaywallModal';
 import { FoodRecommendation, RestaurantRecommendation } from '@/types/app';
 import { useUsageTracking } from '@/hooks/useUsageTracking';
-import { useLocation } from '@/hooks/useLocation';
 
 type AppState = 'hero' | 'location' | 'meal-type' | 'swipe' | 'result';
 
@@ -16,8 +15,8 @@ const Index = () => {
   const [foodResult, setFoodResult] = useState<FoodRecommendation | null>(null);
   const [restaurant, setRestaurant] = useState<RestaurantRecommendation | null>(null);
   const [allRestaurants, setAllRestaurants] = useState<RestaurantRecommendation[]>([]);
+  const [hasLocation, setHasLocation] = useState(false);
   const [selectedMealType, setSelectedMealType] = useState<MealType | null>(null);
-  const { location } = useLocation();
 
   const handleStartSwipe = () => {
     // Start with meal type selection
@@ -41,6 +40,7 @@ const Index = () => {
   };
 
   const handleLocationSet = () => {
+    setHasLocation(true);
     setAppState('swipe');
   };
 
@@ -76,7 +76,6 @@ const Index = () => {
         <SwipeFlow 
           onComplete={handleSwipeComplete} 
           mealType={selectedMealType}
-          location={location}
         />
       )}
       
