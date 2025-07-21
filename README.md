@@ -1,73 +1,62 @@
-# Welcome to your Lovable project
+# 🍽️ Food Swipe - What Should I Eat?
 
-## Project info
+A fun, Tinder-style food discovery app that helps you decide what to eat when you're feeling indecisive. Swipe through food preferences and get personalized recommendations with nearby restaurant suggestions.
 
-**URL**: https://lovable.dev/projects/a0cef393-a146-4807-88c9-84c229c3982b
+## ✨ Features
 
-## How can I edit this code?
+- **Swipe Interface**: Intuitive left/right swiping to discover your food preferences
+- **Smart Recommendations**: AI-powered food suggestions based on your swipe choices  
+- **Location-Based**: Find nearby restaurants serving your recommended dish
+- **Mobile-First**: Optimized for mobile devices with smooth animations
+- **Minimal Design**: Clean, food-focused interface that's easy to use
 
-There are several ways of editing your application.
+## 🚀 How It Works
 
-**Use Lovable**
+1. **Start Swiping**: Answer food preference questions by swiping left or right
+2. **Get Recommendations**: Receive a personalized food suggestion based on your choices
+3. **Find Restaurants**: See nearby restaurants where you can get your recommended dish
+4. **Enjoy**: Go eat something delicious!
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/a0cef393-a146-4807-88c9-84c229c3982b) and start prompting.
+## 🛠️ Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Frontend**: React 18 + TypeScript
+- **Styling**: Tailwind CSS + shadcn/ui components
+- **Build Tool**: Vite
+- **Animations**: Custom swipe gestures and smooth transitions
+- **Location**: Geolocation API for restaurant recommendations
 
-**Use your preferred IDE**
+## 🏃‍♂️ Quick Start
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+```bash
+# Install dependencies
+npm install
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
+
+# Build for production
+npm run build
 ```
 
-**Edit a file directly in GitHub**
+## 📱 Usage
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+1. Click "Find My Food" to start
+2. Allow location access (optional, for restaurant recommendations)
+3. Swipe left or right on food preference cards
+4. Get your personalized food recommendation
+5. Discover nearby restaurants serving that dish
 
-**Use GitHub Codespaces**
+## 🤝 Contributing
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+This is a Lovable project. Changes can be made through:
+- [Lovable Editor](https://lovable.dev/projects/a0cef393-a146-4807-88c9-84c229c3982b)
+- Direct code commits to this repository
+- GitHub Codespaces
 
-## What technologies are used for this project?
+## 📄 License
 
-This project is built with:
+MIT License - feel free to use this project as inspiration for your own food discovery apps!
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+---
 
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/a0cef393-a146-4807-88c9-84c229c3982b) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+*Built with ❤️ for people who can never decide what to eat*
