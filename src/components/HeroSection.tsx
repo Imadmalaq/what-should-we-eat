@@ -66,7 +66,7 @@ export function HeroSection({ onStartQuiz }: HeroSectionProps) {
               size="lg"
               className="text-2xl px-16 py-8 bg-gradient-romantic hover:opacity-90 text-white shadow-warm transform hover:scale-105 transition-all duration-200 rounded-2xl font-bold"
             >
-              Start Swiping for Food!
+              Press to Start!
             </Button>
           </div>
 
