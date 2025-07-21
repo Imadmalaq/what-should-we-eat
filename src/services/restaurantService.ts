@@ -89,7 +89,7 @@ export class RestaurantService {
       });
     } catch (error) {
       console.error('Error finding restaurant:', error);
-      return null;
+      return [];
     }
   }
 

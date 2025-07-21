@@ -137,8 +137,16 @@ export function SwipeFlow({ onComplete, mealType }: SwipeFlowProps) {
 
   const findRestaurantAndComplete = async (result: FoodRecommendation, foodType: string) => {
     try {
-      // Use manual location or fallback to default coordinates
-      const userLocation = location || { latitude: 0, longitude: 0, city: 'Your City' };
+      // Use manual location or fallback to a realistic default location
+      const userLocation = location || { 
+        latitude: 46.2044, 
+        longitude: 6.1432, 
+        city: 'Geneva',
+        isManualInput: false 
+      };
+      
+      console.log('Using location for restaurant search:', userLocation);
+      
       const restaurants = await restaurantService.getRankedRestaurants(
         foodType,
         userLocation,
