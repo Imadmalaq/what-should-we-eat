@@ -25,54 +25,56 @@ export function HeroSection({ onStartQuiz }: HeroSectionProps) {
             </p>
           </div>
 
-          {/* Hero Animation */}
-          <div className="relative mx-auto max-w-4xl">
-            <div className="relative w-96 h-96 mx-auto flex items-center justify-center">
-              {/* Central food showcase with gentle rotation */}
-              <div className="relative w-80 h-80">
-                {/* Center circle with button */}
-                <div className="absolute inset-0 bg-gradient-romantic rounded-full shadow-warm flex items-center justify-center">
-                  <div className="text-center text-white">
-                    <div className="text-6xl mb-3 animate-pulse">🍽️</div>
-                    <p className="text-xl font-semibold mb-4">What to eat?</p>
-                    <Button
-                      onClick={onStartQuiz}
-                      size="lg"
-                      className="text-lg px-8 py-4 bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm transform hover:scale-105 transition-all duration-200 rounded-xl font-bold"
-                    >
-                      Press to Start!
-                    </Button>
+          {/* Modern Hero Visual */}
+          <div className="relative mx-auto max-w-lg">
+            <div className="relative">
+              {/* Main illustration container */}
+              <div className="relative bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 shadow-2xl">
+                {/* Question mark icon with subtle animation */}
+                <div className="text-center">
+                  <div className="relative inline-block">
+                    <div className="text-8xl mb-4 animate-pulse">🤔</div>
+                    <div className="absolute -top-2 -right-2 w-4 h-4 bg-yellow-400 rounded-full animate-ping"></div>
                   </div>
-                </div>
-                
-                {/* Orbiting food items */}
-                <div className="absolute inset-0 animate-[spin_25s_linear_infinite]">
-                  <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white rounded-full p-4 shadow-lg">
-                    <span className="text-3xl">🍕</span>
+                  
+                  {/* Main text */}
+                  <h2 className="text-3xl font-bold text-white mb-2">What should we eat?</h2>
+                  <p className="text-white/80 text-lg mb-6">Let's find out together!</p>
+                  
+                  {/* Interactive food preview */}
+                  <div className="flex justify-center space-x-4 mb-6">
+                    <div className="group cursor-pointer">
+                      <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-all duration-300 group-hover:rotate-6">
+                        <span className="text-2xl">🍕</span>
+                      </div>
+                    </div>
+                    <div className="group cursor-pointer">
+                      <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-all duration-300 group-hover:-rotate-6">
+                        <span className="text-2xl">🍜</span>
+                      </div>
+                    </div>
+                    <div className="group cursor-pointer">
+                      <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-all duration-300 group-hover:rotate-6">
+                        <span className="text-2xl">🍣</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="absolute top-1/2 -right-8 transform -translate-y-1/2 bg-white rounded-full p-4 shadow-lg">
-                    <span className="text-3xl">🍜</span>
-                  </div>
-                  <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white rounded-full p-4 shadow-lg">
-                    <span className="text-3xl">🍣</span>
-                  </div>
-                  <div className="absolute top-1/2 -left-8 transform -translate-y-1/2 bg-white rounded-full p-4 shadow-lg">
-                    <span className="text-3xl">🥗</span>
-                  </div>
-                  <div className="absolute top-8 right-8 bg-white rounded-full p-3 shadow-lg">
-                    <span className="text-2xl">🍰</span>
-                  </div>
-                  <div className="absolute bottom-8 right-8 bg-white rounded-full p-3 shadow-lg">
-                    <span className="text-2xl">🌮</span>
-                  </div>
-                  <div className="absolute bottom-8 left-8 bg-white rounded-full p-3 shadow-lg">
-                    <span className="text-2xl">🍔</span>
-                  </div>
-                  <div className="absolute top-8 left-8 bg-white rounded-full p-3 shadow-lg">
-                    <span className="text-2xl">🥪</span>
-                  </div>
+                  
+                  {/* CTA Button integrated */}
+                  <Button
+                    onClick={onStartQuiz}
+                    size="lg"
+                    className="w-full text-lg px-8 py-4 bg-white text-primary hover:bg-white/90 shadow-lg transform hover:scale-105 transition-all duration-200 rounded-2xl font-bold border-0"
+                  >
+                    Start Finding Food →
+                  </Button>
                 </div>
               </div>
+              
+              {/* Floating elements for visual interest */}
+              <div className="absolute -top-4 -left-4 w-8 h-8 bg-yellow-400/30 rounded-full animate-bounce"></div>
+              <div className="absolute -bottom-4 -right-4 w-6 h-6 bg-pink-400/30 rounded-full animate-pulse"></div>
+              <div className="absolute top-1/2 -right-8 w-4 h-4 bg-blue-400/30 rounded-full animate-ping"></div>
             </div>
           </div>
 
