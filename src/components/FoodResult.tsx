@@ -17,7 +17,7 @@ import { RestaurantService } from '@/services/restaurantService';
 export function FoodResult({ result, onRestart }: FoodResultProps) {
   const handleFindNearby = () => {
     const searchQuery = `${result.title} near me`;
-    window.open(`https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`, '_blank');
+    window.open(`https://www.google.com/maps/search/${encodeURIComponent(searchQuery)}`, '_blank');
   };
 
   const [isSharing, setIsSharing] = useState(false);
