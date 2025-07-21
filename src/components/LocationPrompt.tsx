@@ -21,9 +21,12 @@ export function LocationPrompt({ onLocationSet }: LocationPromptProps) {
   useEffect(() => {
     if (location && !error) {
       console.log('Location set successfully:', location);
-      onLocationSet();
+      const timeoutId = setTimeout(() => {
+        onLocationSet();
+      }, 100);
+      return () => clearTimeout(timeoutId);
     }
-  }, [location, error, onLocationSet]);
+  }, [location, error]); // Removed onLocationSet from dependencies to prevent infinite loop
 
   // Handle city search with debouncing
   useEffect(() => {

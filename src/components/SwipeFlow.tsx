@@ -84,11 +84,15 @@ export function SwipeFlow({ onComplete, mealType }: SwipeFlowProps) {
       
       // Get specific restaurant recommendation
       try {
-        // Use manual location or fallback to default coordinates
-        const userLocation = location || { latitude: 0, longitude: 0, city: 'Your City' };
+        if (!location) {
+          console.error('No location available for restaurant search');
+          onComplete(result);
+          return;
+        }
+        
         const restaurant = await restaurantService.findSpecificRestaurant(
           foodType,
-          userLocation,
+          location,
           {
             priceLevel: newAnswers.budget ? 1 : newAnswers.splurge ? 3 : 2,
             transportMode: 'walking'
@@ -137,13 +141,14 @@ export function SwipeFlow({ onComplete, mealType }: SwipeFlowProps) {
 
   const findRestaurantAndComplete = async (result: FoodRecommendation, foodType: string) => {
     try {
-      // Use manual location or fallback to a realistic default location
-      const userLocation = location || { 
-        latitude: 46.2044, 
-        longitude: 6.1432, 
-        city: 'Geneva',
-        isManualInput: false 
-      };
+      // Use the actual location set by user - don't override manual input!
+      const userLocation = location;
+      
+      if (!userLocation) {
+        console.error('No location available for restaurant search');
+        onComplete(result);
+        return;
+      }
       
       console.log('Using location for restaurant search:', userLocation);
       
