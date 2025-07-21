@@ -20,6 +20,11 @@ export function FoodResult({ result, onRestart }: FoodResultProps) {
     window.open(`https://www.google.com/maps/search/${encodeURIComponent(searchQuery)}`, '_blank');
   };
 
+  const handleOrderUberEats = () => {
+    const searchQuery = result.title;
+    window.open(`https://www.ubereats.com/search?q=${encodeURIComponent(searchQuery)}`, '_blank');
+  };
+
   const [isSharing, setIsSharing] = useState(false);
   const { toast } = useToast();
 
@@ -65,18 +70,34 @@ export function FoodResult({ result, onRestart }: FoodResultProps) {
           </p>
         </div>
 
-        {/* Find Places Button */}
-        <div className="bg-card rounded-lg p-6 border shadow-sm text-center">
-          <h3 className="text-lg font-semibold mb-4 text-foreground">Ready to find places?</h3>
-          <p className="text-muted-foreground mb-4">Let's find {result.title.toLowerCase()} near you!</p>
-          <Button 
-            onClick={handleFindNearby}
-            className="flex items-center gap-2 mx-auto"
-            variant="food"
-          >
-            <MapPin className="w-4 h-4" />
-            Find {result.title} Near Me
-          </Button>
+        {/* Action Buttons */}
+        <div className="bg-card rounded-lg p-6 border shadow-sm">
+          <h3 className="text-lg font-semibold mb-4 text-foreground text-center">Ready to get your food?</h3>
+          <p className="text-muted-foreground mb-6 text-center">Find {result.title.toLowerCase()} near you!</p>
+          
+          <div className="flex flex-col gap-3">
+            <Button 
+              onClick={handleFindNearby}
+              className="flex items-center gap-2"
+              variant="food"
+              size="lg"
+            >
+              <MapPin className="w-4 h-4" />
+              Find {result.title} Near Me
+            </Button>
+            
+            <Button 
+              onClick={handleOrderUberEats}
+              className="flex items-center gap-2"
+              variant="outline"
+              size="lg"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+              Order on Uber Eats
+            </Button>
+          </div>
         </div>
 
         {/* Action Buttons */}
