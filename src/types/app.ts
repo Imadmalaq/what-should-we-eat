@@ -54,6 +54,7 @@ export interface UserLocation {
   longitude: number;
   city?: string;
   postalCode?: string;
+  isManualInput?: boolean;
 }
 
 export interface UsageData {

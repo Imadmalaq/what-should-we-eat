@@ -36,13 +36,14 @@ export function useLocation() {
   };
 
   const setManualLocation = (city: string, postalCode?: string) => {
-    // For MVP, we'll just store the city/postal code
-    // In production, you'd geocode this to get lat/lng
+    // Clear any previous errors and set manual location with priority flag
+    setError(null);
     setLocation({
       latitude: 0,
       longitude: 0,
-      city,
-      postalCode
+      city: city.trim(),
+      postalCode,
+      isManualInput: true // Flag to indicate this is manual input
     });
   };
 

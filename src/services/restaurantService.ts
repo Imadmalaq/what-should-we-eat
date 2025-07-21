@@ -26,8 +26,10 @@ export class RestaurantService {
       // In production, this would use Google Places API
       // For now, simulate API call with realistic restaurant data
       
-      // Prioritize manual city input over coordinates
-      const locationName = location.city || this.getCityFromCoordinates(location.latitude, location.longitude);
+      // Prioritize manual city input over coordinates, ensure manual input is always used
+      const locationName = location.city && location.city !== 'Your City' 
+        ? location.city 
+        : this.getCityFromCoordinates(location.latitude, location.longitude);
       
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -136,17 +138,25 @@ export class RestaurantService {
     // In production, this would use reverse geocoding API
     // For now, return a reasonable default based on coordinates
     
-    // Handle case where manual location was set (coordinates are 0,0)
+    // Handle case where no valid coordinates are available
     if (lat === 0 && lng === 0) return 'Your City';
     
-    // Major cities by approximate coordinates
-    if (lat > 45 && lat < 47 && lng > 5 && lng < 8) return 'Geneva';
-    if (lat > 40 && lat < 41 && lng > -74 && lng < -73) return 'New York';
-    if (lat > 51 && lat < 52 && lng > -1 && lng < 1) return 'London';
-    if (lat > 48 && lat < 49 && lng > 2 && lng < 3) return 'Paris';
-    if (lat > 34 && lat < 35 && lng > -118 && lng < -117) return 'Los Angeles';
-    if (lat > 37 && lat < 38 && lng > -122 && lng < -121) return 'San Francisco';
-    if (lat > 35 && lat < 36 && lng > 139 && lng < 140) return 'Tokyo';
+    // Major cities by approximate coordinates (realistic ranges)
+    if (lat >= 46.1 && lat <= 46.3 && lng >= 6.0 && lng <= 6.3) return 'Geneva';
+    if (lat >= 40.6 && lat <= 40.9 && lng >= -74.1 && lng <= -73.9) return 'New York';
+    if (lat >= 51.4 && lat <= 51.6 && lng >= -0.2 && lng <= 0.1) return 'London';
+    if (lat >= 48.8 && lat <= 48.9 && lng >= 2.2 && lng <= 2.5) return 'Paris';
+    if (lat >= 34.0 && lat <= 34.1 && lng >= -118.5 && lng <= -118.2) return 'Los Angeles';
+    if (lat >= 37.7 && lat <= 37.8 && lng >= -122.5 && lng <= -122.4) return 'San Francisco';
+    if (lat >= 35.6 && lat <= 35.7 && lng >= 139.6 && lng <= 139.8) return 'Tokyo';
+    if (lat >= 52.4 && lat <= 52.6 && lng >= 13.3 && lng <= 13.5) return 'Berlin';
+    if (lat >= 41.8 && lat <= 42.0 && lng >= 12.4 && lng <= 12.6) return 'Rome';
+    if (lat >= 55.7 && lat <= 55.8 && lng >= 37.5 && lng <= 37.7) return 'Moscow';
+    
+    // Fallback based on general regions
+    if (lat >= 40 && lat <= 50 && lng >= -10 && lng <= 10) return 'European City';
+    if (lat >= 25 && lat <= 50 && lng >= -130 && lng <= -60) return 'American City';
+    if (lat >= 30 && lat <= 45 && lng >= 120 && lng <= 150) return 'Asian City';
     
     return 'Your City';
   }
