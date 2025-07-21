@@ -146,40 +146,46 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
             onSwipeRight={handleSwipeRight}
             className="shadow-warm border-2 border-border/50"
           >
-            <div className="space-y-6 text-center">
-              {/* Option A (Left) */}
-              <div className="space-y-2">
-                <div className="text-3xl">{question.optionA.emoji}</div>
-                <p className="font-medium text-foreground">{question.optionA.text}</p>
+            <div className="grid grid-cols-2 h-full min-h-[200px]">
+              {/* Left Option */}
+              <div className="flex flex-col items-center justify-center p-4 bg-red-50/30 border-r border-border/30 rounded-l-lg">
+                <div className="text-4xl mb-3">{question.optionA.emoji}</div>
+                <p className="font-medium text-center text-sm leading-tight text-foreground">
+                  {question.optionA.text}
+                </p>
+                <div className="mt-3 text-xs text-red-600 font-medium opacity-75">
+                  ← Swipe left
+                </div>
               </div>
 
-              <div className="text-2xl text-muted-foreground">VS</div>
-
-              {/* Option B (Right) */}
-              <div className="space-y-2">
-                <div className="text-3xl">{question.optionB.emoji}</div>
-                <p className="font-medium text-foreground">{question.optionB.text}</p>
+              {/* Right Option */}
+              <div className="flex flex-col items-center justify-center p-4 bg-green-50/30 rounded-r-lg">
+                <div className="text-4xl mb-3">{question.optionB.emoji}</div>
+                <p className="font-medium text-center text-sm leading-tight text-foreground">
+                  {question.optionB.text}
+                </p>
+                <div className="mt-3 text-xs text-green-600 font-medium opacity-75">
+                  Swipe right →
+                </div>
               </div>
             </div>
           </SwipeCard>
         </div>
 
         {/* Swipe Instructions - Left and Right */}
-        <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-16">
-          <div className="text-center space-y-2">
-            <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center">
-              <ArrowLeft className="w-6 h-6 text-red-500" />
+        <div className="flex justify-between items-center px-8">
+          <div className="text-center space-y-2 opacity-60">
+            <div className="w-8 h-8 bg-red-500/20 rounded-full flex items-center justify-center">
+              <ArrowLeft className="w-4 h-4 text-red-500" />
             </div>
-            <div className="text-sm text-red-500 font-medium">NO</div>
+            <div className="text-xs text-red-500 font-medium">Option A</div>
           </div>
-        </div>
-        
-        <div className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-16">
-          <div className="text-center space-y-2">
-            <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
-              <ArrowRight className="w-6 h-6 text-green-500" />
+          
+          <div className="text-center space-y-2 opacity-60">
+            <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+              <ArrowRight className="w-4 h-4 text-green-500" />
             </div>
-            <div className="text-sm text-green-500 font-medium">YES</div>
+            <div className="text-xs text-green-500 font-medium">Option B</div>
           </div>
         </div>
       </div>
