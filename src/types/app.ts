@@ -58,6 +58,7 @@ export interface UserLocation {
   longitude: number;
   city?: string;
   postalCode?: string;
+  isManual?: boolean; // Flag to indicate manual vs GPS location
 }
 
 export interface UsageData {

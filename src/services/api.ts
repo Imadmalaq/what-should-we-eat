@@ -1,9 +1,8 @@
 // Public API client - this will stay in the public repo
 // Points to your private backend API
 
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://whatshouldweeat-core.vercel.app/api'  // Your private backend API
-  : 'http://localhost:3000/api';  // Local development (Vercel dev server)
+// For unified architecture, we'll use local services directly instead of external API
+const USE_LOCAL_SERVICES = true;
 
 export interface APIResponse<T> {
   success: boolean;
@@ -14,14 +13,17 @@ export interface APIResponse<T> {
 export class PublicAPIClient {
   private static async request<T>(endpoint: string, options: RequestInit = {}): Promise<APIResponse<T>> {
     try {
-      // For demo purposes, simulate API responses since we don't have a backend yet
+      if (USE_LOCAL_SERVICES) {
+        // Use local services for unified architecture
+        return { success: false, error: 'Using local services instead of API' };
+      }
+      
+      // For external API calls (when USE_LOCAL_SERVICES is false)
       console.log(`API call to ${endpoint}:`, options.body);
       
       // Simulate network delay
       await new Promise(resolve => setTimeout(resolve, 800));
       
-      // Return simulated successful response with empty data
-      // In production, this would make real HTTP requests
       return { 
         success: false, 
         error: 'Backend API not connected - using fallback logic' 

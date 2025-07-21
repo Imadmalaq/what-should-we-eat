@@ -17,6 +17,7 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
   const [answers, setAnswers] = useState<{ [key: string]: string }>({});
   const [questions, setQuestions] = useState<SwipeQuestion[]>([]);
   const [isGeneratingQuestion, setIsGeneratingQuestion] = useState(false);
+  const [askedQuestionIds, setAskedQuestionIds] = useState<Set<string>>(new Set());
   
   const { location } = useLocation();
   const totalQuestions = 3; // Simplified for public demo
@@ -28,15 +29,23 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
       try {
         const response = await PublicAPIClient.generateQuestion({}, 0);
         if (response.success && response.data) {
-          setQuestions([response.data as SwipeQuestion]);
+          const question = response.data as SwipeQuestion;
+          setQuestions([question]);
+          setAskedQuestionIds(new Set([question.id]));
         } else {
           // Use fallback questions
-          setQuestions(FallbackService.getFallbackQuestions().slice(0, 1));
+          const fallbackQuestions = FallbackService.getFallbackQuestions();
+          const firstQuestion = fallbackQuestions[0];
+          setQuestions([firstQuestion]);
+          setAskedQuestionIds(new Set([firstQuestion.id]));
         }
       } catch (error) {
         console.error('Error generating first question:', error);
         // Use fallback questions
-        setQuestions(FallbackService.getFallbackQuestions().slice(0, 1));
+        const fallbackQuestions = FallbackService.getFallbackQuestions();
+        const firstQuestion = fallbackQuestions[0];
+        setQuestions([firstQuestion]);
+        setAskedQuestionIds(new Set([firstQuestion.id]));
       }
       setIsGeneratingQuestion(false);
     };
@@ -83,7 +92,7 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
 
           // Try to find a restaurant if location is available
           let restaurant: RestaurantRecommendation | undefined;
-          if (location.latitude && location.longitude) {
+          if (location && (location.latitude || location.isManual)) {
             const restaurantResponse = await PublicAPIClient.findRestaurant(
               result.cuisine,
               location,
@@ -125,17 +134,44 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
         const response = await PublicAPIClient.generateQuestion(newAnswers, currentQuestion + 1);
         
         if (response.success && response.data) {
-          setQuestions(prev => [...prev, response.data as SwipeQuestion]);
-          setTimeout(() => {
-            setCurrentQuestion(prev => prev + 1);
-            setIsGeneratingQuestion(false);
-          }, 200);
+          const newQuestion = response.data as SwipeQuestion;
+          // Check if we've already asked this question
+          if (!askedQuestionIds.has(newQuestion.id)) {
+            setQuestions(prev => [...prev, newQuestion]);
+            setAskedQuestionIds(prev => new Set(prev).add(newQuestion.id));
+            setTimeout(() => {
+              setCurrentQuestion(prev => prev + 1);
+              setIsGeneratingQuestion(false);
+            }, 200);
+          } else {
+            // Try to get a different question or use fallback
+            const fallbackQuestions = FallbackService.getFallbackQuestions();
+            const unusedFallback = fallbackQuestions.find(q => !askedQuestionIds.has(q.id));
+            if (unusedFallback) {
+              setQuestions(prev => [...prev, unusedFallback]);
+              setAskedQuestionIds(prev => new Set(prev).add(unusedFallback.id));
+              setTimeout(() => {
+                setCurrentQuestion(prev => prev + 1);
+                setIsGeneratingQuestion(false);
+              }, 200);
+            } else {
+              // No more unique questions, provide recommendation
+              const fallbackResult: FoodRecommendation = {
+                name: FallbackService.getBasicRecommendation(newAnswers),
+                description: "Based on your preferences so far, here's what we recommend!",
+                cuisine: 'Various',
+                matchPercentage: 75
+              };
+              onComplete(fallbackResult);
+            }
+          }
         } else {
           // Use fallback questions
           const fallbackQuestions = FallbackService.getFallbackQuestions();
-          const nextIndex = currentQuestion + 1;
-          if (nextIndex < fallbackQuestions.length) {
-            setQuestions(prev => [...prev, fallbackQuestions[nextIndex]]);
+          const unusedFallback = fallbackQuestions.find(q => !askedQuestionIds.has(q.id));
+          if (unusedFallback) {
+            setQuestions(prev => [...prev, unusedFallback]);
+            setAskedQuestionIds(prev => new Set(prev).add(unusedFallback.id));
             setTimeout(() => {
               setCurrentQuestion(prev => prev + 1);
               setIsGeneratingQuestion(false);
@@ -153,11 +189,12 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
         }
       } catch (error) {
         console.error('Error generating next question:', error);
-        // Use fallback questions
+        // Use fallback questions  
         const fallbackQuestions = FallbackService.getFallbackQuestions();
-        const nextIndex = currentQuestion + 1;
-        if (nextIndex < fallbackQuestions.length) {
-          setQuestions(prev => [...prev, fallbackQuestions[nextIndex]]);
+        const unusedFallback = fallbackQuestions.find(q => !askedQuestionIds.has(q.id));
+        if (unusedFallback) {
+          setQuestions(prev => [...prev, unusedFallback]);
+          setAskedQuestionIds(prev => new Set(prev).add(unusedFallback.id));
           setTimeout(() => {
             setCurrentQuestion(prev => prev + 1);
             setIsGeneratingQuestion(false);
