@@ -1,6 +1,6 @@
-# 🍽️ Food Swipe - What Should I Eat?
+# 🍽️ Food Swipe - What Should We Eat?
 
-A fun, Tinder-style food discovery app that helps you decide what to eat when you're feeling indecisive. Swipe through food preferences and get personalized recommendations with nearby restaurant suggestions.
+A fun, Tinder-style food discovery app that helps you decide what to eat when you or your girlfriend are feeling indecisive. Swipe through food preferences and get personalized recommendations with nearby restaurant suggestions.
 
 ## ✨ Features
 
@@ -48,15 +48,14 @@ npm run build
 
 ## 🤝 Contributing
 
-This is a Lovable project. Changes can be made through:
-- [Lovable Editor](https://lovable.dev/projects/a0cef393-a146-4807-88c9-84c229c3982b)
+This is a Lovable project built by Imad Malaq. Changes can be made through:
 - Direct code commits to this repository
 - GitHub Codespaces
 
 ## 📄 License
 
-MIT License - feel free to use this project as inspiration for your own food discovery apps!
+MIT License - feel free to use this project as inspiration for your own food discovery apps. 
 
 ---
 
-*Built with ❤️ for people who can never decide what to eat*
+*Built by Imad Malaq using Lovable & custom code for people who can never decide what to eat*
