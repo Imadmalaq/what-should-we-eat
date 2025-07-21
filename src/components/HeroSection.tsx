@@ -29,32 +29,32 @@ export function HeroSection({ onStartQuiz }: HeroSectionProps) {
           <div className="relative mx-auto max-w-lg">
             <div className="relative">
               {/* Main illustration container */}
-              <div className="relative bg-black/20 backdrop-blur-sm rounded-3xl p-8 border border-white/20 shadow-2xl">
+              <div className="relative bg-gradient-romantic/20 backdrop-blur-sm rounded-3xl p-8 border border-primary/20 shadow-warm">
                 {/* Question mark icon with subtle animation */}
                 <div className="text-center">
                   <div className="relative inline-block">
                     <div className="text-8xl mb-4 animate-pulse">🤔</div>
-                    <div className="absolute -top-2 -right-2 w-4 h-4 bg-yellow-400 rounded-full animate-ping"></div>
+                    <div className="absolute -top-2 -right-2 w-4 h-4 bg-accent rounded-full animate-ping"></div>
                   </div>
                   
                   {/* Main text */}
-                  <h2 className="text-3xl font-bold text-white mb-2">What should we eat?</h2>
-                  <p className="text-white/80 text-lg mb-6">Let's find out together!</p>
+                  <h2 className="text-3xl font-bold text-foreground mb-2">What should we eat?</h2>
+                  <p className="text-muted-foreground text-lg mb-6">Let's find out together!</p>
                   
                   {/* Interactive food preview */}
                   <div className="flex justify-center space-x-4 mb-6">
                     <div className="group cursor-pointer">
-                      <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-all duration-300 group-hover:rotate-6">
+                      <div className="w-16 h-16 bg-card rounded-2xl flex items-center justify-center shadow-soft transform group-hover:scale-110 transition-all duration-300 group-hover:rotate-6 border border-border">
                         <span className="text-2xl">🍕</span>
                       </div>
                     </div>
                     <div className="group cursor-pointer">
-                      <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-all duration-300 group-hover:-rotate-6">
+                      <div className="w-16 h-16 bg-card rounded-2xl flex items-center justify-center shadow-soft transform group-hover:scale-110 transition-all duration-300 group-hover:-rotate-6 border border-border">
                         <span className="text-2xl">🍜</span>
                       </div>
                     </div>
                     <div className="group cursor-pointer">
-                      <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-all duration-300 group-hover:rotate-6">
+                      <div className="w-16 h-16 bg-card rounded-2xl flex items-center justify-center shadow-soft transform group-hover:scale-110 transition-all duration-300 group-hover:rotate-6 border border-border">
                         <span className="text-2xl">🍣</span>
                       </div>
                     </div>
@@ -64,7 +64,7 @@ export function HeroSection({ onStartQuiz }: HeroSectionProps) {
                   <Button
                     onClick={onStartQuiz}
                     size="lg"
-                    className="w-full text-lg px-8 py-4 bg-white text-primary hover:bg-white/90 shadow-lg transform hover:scale-105 transition-all duration-200 rounded-2xl font-bold border-0"
+                    className="w-full text-lg px-8 py-4 bg-gradient-romantic text-primary-foreground hover:opacity-90 shadow-warm transform hover:scale-105 transition-all duration-200 rounded-2xl font-bold border-0"
                   >
                     Press to Start
                   </Button>
@@ -72,9 +72,9 @@ export function HeroSection({ onStartQuiz }: HeroSectionProps) {
               </div>
               
               {/* Floating elements for visual interest */}
-              <div className="absolute -top-4 -left-4 w-8 h-8 bg-yellow-400/30 rounded-full animate-bounce"></div>
-              <div className="absolute -bottom-4 -right-4 w-6 h-6 bg-pink-400/30 rounded-full animate-pulse"></div>
-              <div className="absolute top-1/2 -right-8 w-4 h-4 bg-blue-400/30 rounded-full animate-ping"></div>
+              <div className="absolute -top-4 -left-4 w-8 h-8 bg-accent/30 rounded-full animate-bounce"></div>
+              <div className="absolute -bottom-4 -right-4 w-6 h-6 bg-primary/30 rounded-full animate-pulse"></div>
+              <div className="absolute top-1/2 -right-8 w-4 h-4 bg-primary-glow/30 rounded-full animate-ping"></div>
             </div>
           </div>
 
