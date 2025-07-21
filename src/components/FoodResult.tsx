@@ -148,7 +148,7 @@ export function FoodResult({ result, restaurant, allRestaurants = [], onRestart 
                         disabled={isLoadingAlternatives}
                       >
                         <RefreshCcw className="w-4 h-4 mr-2" />
-                        Pick another (↻)
+                        Pick another
                       </Button>
                     )}
                    </div>
