@@ -28,7 +28,7 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
       try {
         const response = await PublicAPIClient.generateQuestion({}, 0);
         if (response.success && response.data) {
-          setQuestions([response.data]);
+          setQuestions([response.data as SwipeQuestion]);
         } else {
           // Use fallback questions
           setQuestions(FallbackService.getFallbackQuestions().slice(0, 1));
@@ -79,7 +79,7 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
         const response = await PublicAPIClient.getFoodRecommendation(newAnswers);
         
         if (response.success && response.data) {
-          const result: FoodRecommendation = response.data;
+          const result: FoodRecommendation = response.data as FoodRecommendation;
 
           // Try to find a restaurant if location is available
           let restaurant: RestaurantRecommendation | undefined;
@@ -91,7 +91,7 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
             );
             
             if (restaurantResponse.success && restaurantResponse.data) {
-              restaurant = restaurantResponse.data;
+              restaurant = restaurantResponse.data as RestaurantRecommendation;
             }
           }
 
@@ -125,7 +125,7 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
         const response = await PublicAPIClient.generateQuestion(newAnswers, currentQuestion + 1);
         
         if (response.success && response.data) {
-          setQuestions(prev => [...prev, response.data]);
+          setQuestions(prev => [...prev, response.data as SwipeQuestion]);
           setTimeout(() => {
             setCurrentQuestion(prev => prev + 1);
             setIsGeneratingQuestion(false);

@@ -10,6 +10,7 @@ export class FallbackService {
       {
         id: '1',
         question: "What's your mood today?",
+        emoji: "🏠",
         leftOption: { text: "Comfort & cozy", emoji: "🏠" },
         rightOption: { text: "Adventure & new", emoji: "🌟" },
         leftCategory: "comfort",
@@ -18,6 +19,7 @@ export class FallbackService {
       {
         id: '2',
         question: "How hungry are you?",
+        emoji: "🥗",
         leftOption: { text: "Light bite", emoji: "🥗" },
         rightOption: { text: "Full meal", emoji: "🍽️" },
         leftCategory: "light",
@@ -26,6 +28,7 @@ export class FallbackService {
       {
         id: '3',
         question: "What's your flavor preference?",
+        emoji: "🧄",
         leftOption: { text: "Rich & savory", emoji: "🧄" },
         rightOption: { text: "Fresh & light", emoji: "🌿" },
         leftCategory: "savory",

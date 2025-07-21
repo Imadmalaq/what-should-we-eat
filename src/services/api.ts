@@ -14,21 +14,18 @@ export interface APIResponse<T> {
 export class PublicAPIClient {
   private static async request<T>(endpoint: string, options: RequestInit = {}): Promise<APIResponse<T>> {
     try {
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
-        ...options,
-      });
-
-      const data = await response.json();
+      // For demo purposes, simulate API responses since we don't have a backend yet
+      console.log(`API call to ${endpoint}:`, options.body);
       
-      if (!response.ok) {
-        return { success: false, error: data.error || 'API request failed' };
-      }
-
-      return { success: true, data };
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Return simulated successful response with empty data
+      // In production, this would make real HTTP requests
+      return { 
+        success: false, 
+        error: 'Backend API not connected - using fallback logic' 
+      };
     } catch (error) {
       console.error('API request failed:', error);
       return { success: false, error: 'Network error' };

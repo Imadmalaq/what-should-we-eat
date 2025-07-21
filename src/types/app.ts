@@ -2,16 +2,16 @@ export interface SwipeQuestion {
   id: string;
   question: string;
   emoji: string;
-  optionA: {
+  leftOption: {
     text: string;
     emoji: string;
-    category: string;
   };
-  optionB: {
+  rightOption: {
     text: string;
     emoji: string;
-    category: string;
   };
+  leftCategory: string;
+  rightCategory: string;
 }
 
 export interface Restaurant {
@@ -25,11 +25,15 @@ export interface Restaurant {
 }
 
 export interface FoodRecommendation {
-  type: string;
-  title: string;
+  name: string;
   description: string;
-  emoji: string;
-  suggestions: string[];
+  cuisine: string;
+  matchPercentage: number;
+  // Legacy properties for backward compatibility
+  type?: string;
+  title?: string;
+  emoji?: string;
+  suggestions?: string[];
   image?: string;
 }
 

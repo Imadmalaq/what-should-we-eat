@@ -5,7 +5,7 @@ import { FoodResult } from '@/components/FoodResult';
 import { LocationPrompt } from '@/components/LocationPrompt';
 import { PaywallModal } from '@/components/PaywallModal';
 import { FoodRecommendation, RestaurantRecommendation } from '@/types/app';
-import { useUsageTracking } from '@/hooks/useUsageTracking';
+// import { useUsageTracking } from '@/hooks/useUsageTracking'; // Disabled in public repo
 
 type AppState = 'hero' | 'location' | 'swipe' | 'result';
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,18 +11,36 @@ interface FoodResultProps {
   onRestart: () => void;
 }
 
-import { RestaurantService } from '@/services/restaurantService';
+// Simple utility functions for the public repo
+const getPriceLevelText = (level: number): string => {
+  const levels = ['$', '$$', '$$$', '$$$$'];
+  return levels[level - 1] || '$$';
+};
+
+const formatGoogleMapsUrl = (name: string, address: string): string => {
+  const query = encodeURIComponent(`${name} ${address}`);
+  return `https://maps.google.com/?q=${query}`;
+};
+
+const formatUberEatsUrl = (name: string, location: string): string => {
+  const query = encodeURIComponent(`${name} ${location}`);
+  return `https://www.ubereats.com/search?q=${query}`;
+};
+
+const hasDeliveryService = (cuisine: string, priceLevel: number): boolean => {
+  // Simple heuristic - most restaurants under $$$ likely have delivery
+  return priceLevel <= 3;
+};
 
 export function FoodResult({ result, restaurant, onRestart }: FoodResultProps) {
-  const restaurantService = RestaurantService.getInstance();
   const [isSharing, setIsSharing] = useState(false);
 
   const handleShare = async () => {
     setIsSharing(true);
     
     const shareData = {
-      title: `${result.title} - What Should We Eat?`,
-      text: `We decided on ${result.title.toLowerCase()}! ${result.description}`,
+      title: `${result.name || result.title} - What Should We Eat?`,
+      text: `We decided on ${(result.name || result.title || 'something delicious').toLowerCase()}! ${result.description}`,
       url: window.location.href
     };
 
@@ -49,9 +67,9 @@ export function FoodResult({ result, restaurant, onRestart }: FoodResultProps) {
       <div className="max-w-2xl mx-auto space-y-8">
         {/* Result Header */}
         <div className="text-center space-y-4 animate-bounce-in">
-          <div className="text-8xl mb-4">{result.emoji}</div>
+          <div className="text-8xl mb-4">{result.emoji || '🍽️'}</div>
           <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-            {result.title}
+            {result.name || result.title}
           </h1>
           <p className="text-lg text-muted-foreground max-w-lg mx-auto">
             {result.description}
@@ -70,7 +88,7 @@ export function FoodResult({ result, restaurant, onRestart }: FoodResultProps) {
               <CardContent className="p-6 text-center">
                 <div className="space-y-4">
                   <h3 className="font-bold text-2xl text-foreground">{restaurant.name}</h3>
-                  <p className="text-muted-foreground text-lg">{restaurant.cuisine} • {restaurantService.getPriceLevelText(restaurant.priceLevel)}</p>
+                  <p className="text-muted-foreground text-lg">{restaurant.cuisine} • {getPriceLevelText(restaurant.priceLevel)}</p>
                   
                   <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                     <Navigation className="w-4 h-4" />
@@ -79,7 +97,7 @@ export function FoodResult({ result, restaurant, onRestart }: FoodResultProps) {
 
                   <div className="flex flex-col gap-3 pt-4">
                     <Button
-                      onClick={() => window.open(restaurantService.formatGoogleMapsUrl(restaurant.name, restaurant.address), '_blank')}
+                      onClick={() => window.open(formatGoogleMapsUrl(restaurant.name, restaurant.address), '_blank')}
                       size="lg"
                       className="w-full"
                     >
@@ -87,10 +105,10 @@ export function FoodResult({ result, restaurant, onRestart }: FoodResultProps) {
                       Get Directions
                     </Button>
                     
-                    {restaurantService.hasDeliveryService(restaurant.cuisine, restaurant.priceLevel) && (
+                    {hasDeliveryService(restaurant.cuisine, restaurant.priceLevel) && (
                       <Button
                         variant="outline"
-                        onClick={() => window.open(restaurantService.formatUberEatsUrl(restaurant.name, restaurant.address), '_blank')}
+                        onClick={() => window.open(formatUberEatsUrl(restaurant.name, restaurant.address), '_blank')}
                         size="lg"
                         className="w-full"
                       >
@@ -111,17 +129,17 @@ export function FoodResult({ result, restaurant, onRestart }: FoodResultProps) {
             <Card className="p-6 shadow-soft max-w-md mx-auto">
               <CardContent className="space-y-4">
                 <MapPin className="w-12 h-12 mx-auto text-muted-foreground" />
-                <h3 className="text-xl font-semibold">Find {result.type} Nearby</h3>
+                <h3 className="text-xl font-semibold">Find {result.name || result.type || 'Food'} Nearby</h3>
                 <p className="text-muted-foreground">
-                  Let's find you the perfect {result.type} spot in your area!
+                  Let's find you the perfect {result.name || result.type || 'food'} spot in your area!
                 </p>
                 <Button
-                  onClick={() => window.open(`https://maps.google.com/?q=${result.type}+restaurant+near+me`, '_blank')}
+                  onClick={() => window.open(`https://maps.google.com/?q=${result.name || result.type || 'restaurant'}+near+me`, '_blank')}
                   size="lg"
                   className="w-full"
                 >
                   <MapPin className="w-4 h-4 mr-2" />
-                  Find {result.type} on Maps
+                  Find {result.name || result.type || 'Food'} on Maps
                 </Button>
               </CardContent>
             </Card>
