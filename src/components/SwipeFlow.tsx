@@ -146,32 +146,28 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
             onSwipeRight={handleSwipeRight}
             className="shadow-warm border-2 border-border/50 bg-card"
           >
-            <div className="space-y-8 text-center p-2">
-              {/* Option A (Left) */}
-              <div className="relative group">
-                <div className="absolute -left-6 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="text-xs text-muted-foreground">👈</div>
-                </div>
-                <div className="p-4 rounded-xl bg-gradient-to-r from-orange-50/50 to-transparent hover:from-orange-100/50 transition-all">
-                  <div className="text-4xl mb-2">{question.optionA.emoji}</div>
-                  <p className="font-medium text-foreground leading-snug">
-                    {question.optionA.text}
-                  </p>
+            <div className="flex h-full min-h-[250px]">
+              {/* Left Option - Swipe Left */}
+              <div className="flex-1 flex flex-col items-center justify-center p-4 bg-gradient-to-r from-orange-50/40 to-transparent border-r border-border/20">
+                <div className="text-4xl mb-3">{question.optionA.emoji}</div>
+                <p className="font-medium text-center text-sm leading-tight text-foreground mb-3">
+                  {question.optionA.text}
+                </p>
+                <div className="text-xs text-orange-600 font-medium opacity-70 flex items-center gap-1">
+                  <ArrowLeft className="w-3 h-3" />
+                  Swipe left
                 </div>
               </div>
 
-              <div className="text-lg text-muted-foreground/50">or</div>
-
-              {/* Option B (Right) */}
-              <div className="relative group">
-                <div className="absolute -right-6 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="text-xs text-muted-foreground">👉</div>
-                </div>
-                <div className="p-4 rounded-xl bg-gradient-to-l from-green-50/50 to-transparent hover:from-green-100/50 transition-all">
-                  <div className="text-4xl mb-2">{question.optionB.emoji}</div>
-                  <p className="font-medium text-foreground leading-snug">
-                    {question.optionB.text}
-                  </p>
+              {/* Right Option - Swipe Right */}
+              <div className="flex-1 flex flex-col items-center justify-center p-4 bg-gradient-to-l from-green-50/40 to-transparent">
+                <div className="text-4xl mb-3">{question.optionB.emoji}</div>
+                <p className="font-medium text-center text-sm leading-tight text-foreground mb-3">
+                  {question.optionB.text}
+                </p>
+                <div className="text-xs text-green-600 font-medium opacity-70 flex items-center gap-1">
+                  Swipe right
+                  <ArrowRight className="w-3 h-3" />
                 </div>
               </div>
             </div>
