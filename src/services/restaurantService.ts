@@ -1,9 +1,9 @@
 import { UserLocation, RestaurantRecommendation } from '@/types/app';
 
-// Global restaurant service - works worldwide with location detection
-// In production, this would use Google Places API or similar service
 export class RestaurantService {
   private static instance: RestaurantService;
+  private yelpApiKey: string = '_D0cHWzZ3n5wwci-FbfXYvGaZwvqSbHErcPQPBPM8IEialYiphrtB6UJp2RO5gNGejZpFIYXHu470wKnok1alw3LT9-OnPQhcF8PBaM7P03Zltj0_Bug4fkSm79-aHYx';
+  private foursquareApiKey: string = 'E3B4TGYDZBVBNIEPJ43MPHZ1YGNMTPJYJD2G1JZBMQLBRUZS';
 
   static getInstance(): RestaurantService {
     if (!this.instance) {
@@ -36,61 +36,128 @@ export class RestaurantService {
   ): Promise<RestaurantRecommendation[]> {
     
     try {
-      // Guard clause: ensure we have a valid city
-      if ((!location.city || location.city.trim() === '' || location.city === 'Your City') &&
-          (location.latitude === 0 && location.longitude === 0)) {
-        throw new Error('City unresolved—prompt manual entry');
+      // Validate location
+      if (!location.latitude || !location.longitude) {
+        throw new Error('Invalid location coordinates');
       }
 
-      // In production, this would use Google Places API
-      // For now, simulate API call with realistic restaurant data
-      
-      // Prioritize manual city input over coordinates, ensure valid location
-      let locationName: string;
-      
-      if (location.isManualInput && location.city && location.city !== 'Your City') {
-        // Manual input takes absolute priority
-        locationName = location.city;
-        console.log('Restaurant service - using manual input city:', locationName);
-      } else if (location.city && location.city !== 'Your City') {
-        // Use geocoded city from coordinates
-        locationName = location.city;
-        console.log('Restaurant service - using geocoded city:', locationName);
-      } else if (location.latitude !== 0 && location.longitude !== 0) {
-        // Try to resolve from coordinates
-        locationName = this.getCityFromCoordinates(location.latitude, location.longitude);
-        console.log('Restaurant service - resolved city from coordinates:', locationName);
-      } else {
-        // Fallback to default
-        locationName = 'Your City';
-        console.log('Restaurant service - using fallback city:', locationName);
-      }
-      
-      console.log('Restaurant service - final location input:', location);
-      console.log('Restaurant service - final resolved city:', locationName);
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Generate multiple realistic restaurants and rank them
-      const restaurants: RestaurantRecommendation[] = [];
-      const numRestaurants = Math.min(5, Math.max(3, Math.floor(Math.random() * 3) + 3)); // 3-5 restaurants
-      
-      for (let i = 0; i < numRestaurants; i++) {
-        const restaurant = this.generateRealisticRestaurant(cuisineType, locationName, location, preferences, i);
-        restaurants.push(restaurant);
-      }
-      
-      // Sort by rating × proximity score (higher rating and closer distance = better score)
-      return restaurants.sort((a, b) => {
-        const scoreA = a.rating * (6 - this.getDistanceScore(a.distance)); // Higher rating, shorter distance = higher score
-        const scoreB = b.rating * (6 - this.getDistanceScore(b.distance));
-        return scoreB - scoreA;
+      console.log('Searching restaurants:', {
+        cuisine: cuisineType,
+        location: location.city,
+        coordinates: [location.latitude, location.longitude]
       });
+
+      // Try Yelp API first
+      if (this.yelpApiKey) {
+        try {
+          const yelpResults = await this.searchYelpRestaurants(cuisineType, location, preferences);
+          if (yelpResults.length > 0) {
+            return yelpResults;
+          }
+        } catch (error) {
+          console.warn('Yelp API failed, using fallback:', error);
+        }
+      }
+
+      // Fallback to mock data for now
+      return this.getFallbackRestaurants(cuisineType, location);
+
     } catch (error) {
-      console.error('Error finding restaurant:', error);
-      return [];
+      console.error('Error finding restaurants:', error);
+      return this.getFallbackRestaurants(cuisineType, location);
     }
+  }
+
+  private async searchYelpRestaurants(
+    cuisineType: string,
+    location: UserLocation,
+    preferences: any
+  ): Promise<RestaurantRecommendation[]> {
+    const radius = preferences.maxDistance ? Math.min(preferences.maxDistance * 1000, 40000) : 5000;
+    const price = preferences.priceLevel ? Array.from({length: preferences.priceLevel}, (_, i) => i + 1).join(',') : '';
+
+    const params = new URLSearchParams({
+      latitude: location.latitude.toString(),
+      longitude: location.longitude.toString(),
+      categories: this.mapCuisineToYelpCategory(cuisineType),
+      radius: radius.toString(),
+      limit: '10',
+      sort_by: 'best_match'
+    });
+
+    if (price) {
+      params.append('price', price);
+    }
+
+    const response = await fetch(`https://api.yelp.com/v3/businesses/search?${params}`, {
+      headers: {
+        'Authorization': `Bearer ${this.yelpApiKey}`,
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Yelp API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    return data.businesses.map((business: any) => this.mapYelpToRestaurant(business, location));
+  }
+
+  private getFallbackRestaurants(cuisineType: string, location: UserLocation): RestaurantRecommendation[] {
+    // Generate realistic fallback data
+    const restaurants: RestaurantRecommendation[] = [];
+    const numRestaurants = Math.min(5, Math.max(3, Math.floor(Math.random() * 3) + 3));
+    
+    for (let i = 0; i < numRestaurants; i++) {
+      const restaurant = this.generateRealisticRestaurant(cuisineType, location.city || 'Your City', location, {}, i);
+      restaurants.push(restaurant);
+    }
+    
+    return restaurants.sort((a, b) => {
+      const scoreA = a.rating * (6 - this.getDistanceScore(a.distance));
+      const scoreB = b.rating * (6 - this.getDistanceScore(b.distance));
+      return scoreB - scoreA;
+    });
+  }
+
+  private mapYelpToRestaurant(business: any, userLocation: UserLocation): RestaurantRecommendation {
+    return {
+      name: business.name,
+      address: business.location.display_address.join(', '),
+      rating: business.rating,
+      priceLevel: business.price ? business.price.length : 2,
+      cuisine: business.categories[0]?.title || 'Restaurant',
+      distance: `${(business.distance / 1609.34).toFixed(1)} miles`,
+      speciality: business.categories.map((cat: any) => cat.title).join(', '),
+      phone: business.phone || business.display_phone,
+      openNow: !business.is_closed,
+      coordinates: {
+        lat: business.coordinates.latitude,
+        lng: business.coordinates.longitude
+      }
+    };
+  }
+
+  private mapCuisineToYelpCategory(cuisine: string): string {
+    const mapping: { [key: string]: string } = {
+      'italian': 'italian',
+      'chinese': 'chinese',
+      'mexican': 'mexican',
+      'indian': 'indpak',
+      'thai': 'thai',
+      'japanese': 'japanese',
+      'french': 'french',
+      'american': 'newamerican',
+      'mediterranean': 'mediterranean',
+      'korean': 'korean',
+      'vietnamese': 'vietnamese',
+      'sushi': 'sushi',
+      'pizza': 'pizza',
+      'burgers': 'burgers'
+    };
+    return mapping[cuisine.toLowerCase()] || 'restaurants';
   }
 
   private getDistanceScore(distance: string): number {
