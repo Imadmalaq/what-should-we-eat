@@ -66,7 +66,7 @@ export function HeroSection({ onStartQuiz }: HeroSectionProps) {
                     size="lg"
                     className="w-full text-lg px-8 py-4 bg-gradient-romantic text-primary-foreground hover:opacity-90 shadow-warm transform hover:scale-105 transition-all duration-200 rounded-2xl font-bold border-0"
                   >
-                    Press to Start
+                    Let's Go! 🎯
                   </Button>
                 </div>
               </div>
