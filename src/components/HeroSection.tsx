@@ -29,7 +29,7 @@ export function HeroSection({ onStartQuiz }: HeroSectionProps) {
           <div className="relative mx-auto max-w-lg">
             <div className="relative">
               {/* Main illustration container */}
-              <div className="relative bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 shadow-2xl">
+              <div className="relative bg-black/20 backdrop-blur-sm rounded-3xl p-8 border border-white/20 shadow-2xl">
                 {/* Question mark icon with subtle animation */}
                 <div className="text-center">
                   <div className="relative inline-block">
