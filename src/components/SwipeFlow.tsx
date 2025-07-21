@@ -11,7 +11,7 @@ import { MealType } from '@/components/MealTypeSelector';
 import { Heart, X, ArrowLeft, ArrowRight } from 'lucide-react';
 
 interface SwipeFlowProps {
-  onComplete: (result: FoodRecommendation, restaurant?: RestaurantRecommendation, allRestaurants?: RestaurantRecommendation[]) => void;
+  onComplete: (result: FoodRecommendation) => void;
   mealType: MealType;
 }
 
@@ -82,23 +82,7 @@ export function SwipeFlow({ onComplete, mealType }: SwipeFlowProps) {
       const foodType = calculateEnhancedRecommendation(newAnswers, mealType);
       const result = foodRecommendations[foodType] || foodRecommendations.surprise;
       
-      // Get specific restaurant recommendation
-      try {
-        // Use manual location or fallback to default coordinates
-        const userLocation = location || { latitude: 0, longitude: 0, city: 'Your City' };
-        const restaurant = await restaurantService.findSpecificRestaurant(
-          foodType,
-          userLocation,
-          {
-            priceLevel: newAnswers.budget ? 1 : newAnswers.splurge ? 3 : 2,
-            transportMode: 'walking'
-          }
-        );
-        onComplete(result, restaurant || undefined);
-      } catch (error) {
-        console.error('Error finding restaurant:', error);
-        onComplete(result);
-      }
+      onComplete(result);
     } else {
       // Generate next question based on current answers
       setIsGeneratingQuestion(true);
@@ -130,38 +114,7 @@ export function SwipeFlow({ onComplete, mealType }: SwipeFlowProps) {
     // Calculate final recommendation using enhanced algorithm with meal type
     const foodType = calculateEnhancedRecommendation(answers, mealType);
     const result = foodRecommendations[foodType] || foodRecommendations.surprise;
-    
-    // Get specific restaurant recommendation
-    findRestaurantAndComplete(result, foodType);
-  };
-
-  const findRestaurantAndComplete = async (result: FoodRecommendation, foodType: string) => {
-    try {
-      // Use manual location or fallback to a realistic default location
-      const userLocation = location || { 
-        latitude: 46.2044, 
-        longitude: 6.1432, 
-        city: 'Geneva',
-        isManualInput: false 
-      };
-      
-      console.log('Using location for restaurant search:', userLocation);
-      
-      const restaurants = await restaurantService.getRankedRestaurants(
-        foodType,
-        userLocation,
-        {
-          priceLevel: answers.budget ? 1 : answers.splurge ? 3 : 2,
-          transportMode: 'walking'
-        }
-      );
-      
-      const bestRestaurant = restaurants && restaurants.length > 0 ? restaurants[0] : null;
-      onComplete(result, bestRestaurant || undefined, restaurants || []);
-    } catch (error) {
-      console.error('Error finding restaurant:', error);
-      onComplete(result);
-    }
+    onComplete(result);
   };
 
   // Helper function to get meal type specific fallback questions

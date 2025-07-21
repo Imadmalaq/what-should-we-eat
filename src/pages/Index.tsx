@@ -25,18 +25,8 @@ const Index = () => {
 
   const handleMealTypeSelected = (mealType: MealType) => {
     setSelectedMealType(mealType);
-    // Check if we need location first
-    navigator.geolocation.getCurrentPosition(
-      () => {
-        // Location permission granted, proceed to quiz
-        setAppState('swipe');
-      },
-      () => {
-        // Location denied or unavailable, show location prompt
-        setAppState('location');
-      },
-      { timeout: 5000 }
-    );
+    // Go directly to questions - no location needed
+    setAppState('swipe');
   };
 
   const handleLocationSet = () => {
@@ -44,10 +34,8 @@ const Index = () => {
     setAppState('swipe');
   };
 
-  const handleSwipeComplete = (result: FoodRecommendation, restaurantResult?: RestaurantRecommendation, restaurants?: RestaurantRecommendation[]) => {
+  const handleSwipeComplete = (result: FoodRecommendation) => {
     setFoodResult(result);
-    setRestaurant(restaurantResult || null);
-    setAllRestaurants(restaurants || []);
     setAppState('result');
   };
 
@@ -68,10 +56,6 @@ const Index = () => {
         <MealTypeSelector onMealTypeSelected={handleMealTypeSelected} />
       )}
 
-      {appState === 'location' && (
-        <LocationPrompt onLocationSet={handleLocationSet} />
-      )}
-      
       {appState === 'swipe' && selectedMealType && (
         <SwipeFlow 
           onComplete={handleSwipeComplete} 
@@ -82,8 +66,6 @@ const Index = () => {
       {appState === 'result' && foodResult && (
         <FoodResult 
           result={foodResult} 
-          restaurant={restaurant}
-          allRestaurants={allRestaurants}
           onRestart={handleRestart}
         />
       )}

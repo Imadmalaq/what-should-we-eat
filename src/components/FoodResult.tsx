@@ -9,47 +9,20 @@ import { useToast } from '@/hooks/use-toast';
 
 interface FoodResultProps {
   result: FoodRecommendation;
-  restaurant?: RestaurantRecommendation;
-  allRestaurants?: RestaurantRecommendation[];
   onRestart: () => void;
 }
 
 import { RestaurantService } from '@/services/restaurantService';
 
-export function FoodResult({ result, restaurant, allRestaurants = [], onRestart }: FoodResultProps) {
-  const restaurantService = RestaurantService.getInstance();
-  const [isSharing, setIsSharing] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [restaurants, setRestaurants] = useState<RestaurantRecommendation[]>([]);
-  const [isLoadingAlternatives, setIsLoadingAlternatives] = useState(false);
-  const { toast } = useToast();
-
-  // Load all restaurant alternatives on component mount
-  useEffect(() => {
-    if (allRestaurants.length > 0) {
-      setRestaurants(allRestaurants);
-    } else if (restaurant) {
-      // Fallback to single restaurant if allRestaurants not provided
-      setRestaurants([restaurant]);
-    }
-    setIsLoadingAlternatives(false);
-  }, [restaurant, allRestaurants]);
-
-  const handlePickAnother = () => {
-    if (restaurants.length <= 1) {
-      toast({
-        title: "No alternatives found",
-        description: "Couldn't find any other spots nearby. Try expanding your distance or changing meal type.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    const nextIndex = (currentIndex + 1) % restaurants.length;
-    setCurrentIndex(nextIndex);
+export function FoodResult({ result, onRestart }: FoodResultProps) {
+  const handleFindNearby = () => {
+    const searchQuery = `${result.title} near me`;
+    window.open(`https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`, '_blank');
   };
 
-  const currentRestaurant = restaurants[currentIndex] || restaurant;
+  const [isSharing, setIsSharing] = useState(false);
+  const { toast } = useToast();
+
 
   const handleShare = async () => {
     setIsSharing(true);
@@ -92,95 +65,19 @@ export function FoodResult({ result, restaurant, allRestaurants = [], onRestart 
           </p>
         </div>
 
-        {/* Single Restaurant Recommendation */}
-        {currentRestaurant && (
-          <div className="space-y-6 animate-fade-in">
-            <h2 className="text-2xl font-semibold text-center text-foreground">
-              <MapPin className="w-6 h-6 inline mr-2" />
-              Perfect Spot for You
-            </h2>
-            
-            <Card className="shadow-soft hover:shadow-warm transition-all duration-300 animate-slide-in max-w-md mx-auto">
-              <CardContent className="p-6 text-center">
-                <div className="space-y-4">
-                  <h3 className="font-bold text-2xl text-foreground">{currentRestaurant.name}</h3>
-                  <p className="text-muted-foreground">{currentRestaurant.address}</p>
-                  <div className="flex items-center justify-center gap-4 text-sm">
-                    <Badge variant="secondary">★ {currentRestaurant.rating}</Badge>
-                    <Badge variant="outline">{restaurantService.getPriceLevelText(currentRestaurant.priceLevel)}</Badge>
-                  </div>
-                  <p className="text-muted-foreground text-lg">{currentRestaurant.cuisine}</p>
-                  
-                  <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                    <Navigation className="w-4 h-4" />
-                    <span>{currentRestaurant.distance} away</span>
-                  </div>
-
-                  <div className="flex flex-col gap-3 pt-4">
-                    <Button
-                      onClick={() => window.open(restaurantService.formatGoogleMapsUrl(currentRestaurant.name, currentRestaurant.address), '_blank')}
-                      size="lg"
-                      className="w-full"
-                    >
-                      <MapPin className="w-4 h-4 mr-2" />
-                      Get Directions
-                    </Button>
-                    
-                    {restaurantService.hasDeliveryService(currentRestaurant.cuisine, currentRestaurant.priceLevel) && (
-                      <Button
-                        variant="outline"
-                        onClick={() => window.open(restaurantService.formatUberEatsUrl(currentRestaurant.name, currentRestaurant.address), '_blank')}
-                        size="lg"
-                        className="w-full"
-                      >
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        Order on Uber Eats
-                      </Button>
-                    )}
-
-                    {/* Re-choose Button - Only show if we have alternatives */}
-                    {restaurants.length > 1 && (
-                      <Button
-                        onClick={handlePickAnother}
-                        variant="outline"
-                        size="lg"
-                        className="w-full"
-                        disabled={isLoadingAlternatives}
-                      >
-                        <RefreshCcw className="w-4 h-4 mr-2" />
-                        Pick another
-                      </Button>
-                    )}
-                   </div>
-                 </div>
-               </CardContent>
-             </Card>
-
-           </div>
-         )}
-
-        {/* No Restaurant Fallback */}
-        {!currentRestaurant && (
-          <div className="text-center space-y-4 animate-fade-in">
-            <Card className="p-6 shadow-soft max-w-md mx-auto">
-              <CardContent className="space-y-4">
-                <MapPin className="w-12 h-12 mx-auto text-muted-foreground" />
-                <h3 className="text-xl font-semibold">Find {result.type} Nearby</h3>
-                <p className="text-muted-foreground">
-                  Let's find you the perfect {result.type} spot in your area!
-                </p>
-                <Button
-                  onClick={() => window.open(`https://maps.google.com/?q=${result.type}+restaurant+near+me`, '_blank')}
-                  size="lg"
-                  className="w-full"
-                >
-                  <MapPin className="w-4 h-4 mr-2" />
-                  Find {result.type} on Maps
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+        {/* Find Places Button */}
+        <div className="bg-card rounded-lg p-6 border shadow-sm text-center">
+          <h3 className="text-lg font-semibold mb-4 text-foreground">Ready to find places?</h3>
+          <p className="text-muted-foreground mb-4">Let's find {result.title.toLowerCase()} near you!</p>
+          <Button 
+            onClick={handleFindNearby}
+            className="flex items-center gap-2 mx-auto"
+            variant="food"
+          >
+            <MapPin className="w-4 h-4" />
+            Find {result.title} Near Me
+          </Button>
+        </div>
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
