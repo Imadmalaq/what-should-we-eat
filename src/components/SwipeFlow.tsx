@@ -11,7 +11,7 @@ import { MealType } from '@/components/MealTypeSelector';
 import { Heart, X, ArrowLeft, ArrowRight } from 'lucide-react';
 
 interface SwipeFlowProps {
-  onComplete: (result: FoodRecommendation, restaurant?: RestaurantRecommendation) => void;
+  onComplete: (result: FoodRecommendation, restaurant?: RestaurantRecommendation, allRestaurants?: RestaurantRecommendation[]) => void;
   mealType: MealType;
 }
 
@@ -139,7 +139,7 @@ export function SwipeFlow({ onComplete, mealType }: SwipeFlowProps) {
     try {
       // Use manual location or fallback to default coordinates
       const userLocation = location || { latitude: 0, longitude: 0, city: 'Your City' };
-      const restaurant = await restaurantService.findSpecificRestaurant(
+      const restaurants = await restaurantService.getRankedRestaurants(
         foodType,
         userLocation,
         {
@@ -147,7 +147,9 @@ export function SwipeFlow({ onComplete, mealType }: SwipeFlowProps) {
           transportMode: 'walking'
         }
       );
-      onComplete(result, restaurant || undefined);
+      
+      const bestRestaurant = restaurants && restaurants.length > 0 ? restaurants[0] : null;
+      onComplete(result, bestRestaurant || undefined, restaurants || []);
     } catch (error) {
       console.error('Error finding restaurant:', error);
       onComplete(result);

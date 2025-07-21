@@ -21,6 +21,19 @@ export class RestaurantService {
       maxDistance?: number;
     } = {}
   ): Promise<RestaurantRecommendation | null> {
+    const restaurants = await this.getRankedRestaurants(cuisineType, location, preferences);
+    return restaurants.length > 0 ? restaurants[0] : null;
+  }
+
+  async getRankedRestaurants(
+    cuisineType: string,
+    location: UserLocation,
+    preferences: {
+      priceLevel?: number;
+      transportMode?: string;
+      maxDistance?: number;
+    } = {}
+  ): Promise<RestaurantRecommendation[]> {
     
     try {
       // Guard clause: ensure we have a valid city
@@ -59,24 +72,47 @@ export class RestaurantService {
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Generate realistic restaurant based on location and cuisine
-      const restaurant = this.generateRealisticRestaurant(cuisineType, locationName, location, preferences);
+      // Generate multiple realistic restaurants and rank them
+      const restaurants: RestaurantRecommendation[] = [];
+      const numRestaurants = Math.min(5, Math.max(3, Math.floor(Math.random() * 3) + 3)); // 3-5 restaurants
       
-      return restaurant;
+      for (let i = 0; i < numRestaurants; i++) {
+        const restaurant = this.generateRealisticRestaurant(cuisineType, locationName, location, preferences, i);
+        restaurants.push(restaurant);
+      }
+      
+      // Sort by rating × proximity score (higher rating and closer distance = better score)
+      return restaurants.sort((a, b) => {
+        const scoreA = a.rating * (6 - this.getDistanceScore(a.distance)); // Higher rating, shorter distance = higher score
+        const scoreB = b.rating * (6 - this.getDistanceScore(b.distance));
+        return scoreB - scoreA;
+      });
     } catch (error) {
       console.error('Error finding restaurant:', error);
       return null;
     }
   }
 
+  private getDistanceScore(distance: string): number {
+    // Convert distance string to score (1-5, where 1 is closest)
+    if (distance.includes('3 min') || distance.includes('5 min')) return 1;
+    if (distance.includes('7 min') || distance.includes('8 min')) return 2;
+    if (distance.includes('10 min') || distance.includes('12 min')) return 3;
+    if (distance.includes('15 min')) return 4;
+    return 5;
+  }
+
   private generateRealisticRestaurant(
     cuisineType: string,
     cityName: string,
     location: UserLocation,
-    preferences: any
+    preferences: any,
+    index: number = 0
   ): RestaurantRecommendation {
     const restaurantNames = this.getRestaurantNames(cuisineType);
-    const randomName = restaurantNames[Math.floor(Math.random() * restaurantNames.length)];
+    // Ensure different restaurants by using index
+    const nameIndex = (Math.floor(Math.random() * restaurantNames.length) + index) % restaurantNames.length;
+    const randomName = restaurantNames[nameIndex];
     
     return {
       name: randomName,
