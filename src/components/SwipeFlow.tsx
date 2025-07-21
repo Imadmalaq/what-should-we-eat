@@ -164,36 +164,23 @@ export function SwipeFlow({ onComplete }: SwipeFlowProps) {
           </SwipeCard>
         </div>
 
-        {/* Swipe Instructions */}
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <ArrowLeft className="w-4 h-4" />
-            <span>{question.optionA.text}</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span>{question.optionB.text}</span>
-            <ArrowRight className="w-4 h-4" />
+        {/* Swipe Instructions - Left and Right */}
+        <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-16">
+          <div className="text-center space-y-2">
+            <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center">
+              <ArrowLeft className="w-6 h-6 text-red-500" />
+            </div>
+            <div className="text-sm text-red-500 font-medium">NO</div>
           </div>
         </div>
-
-        {/* Action Buttons */}
-        <div className="flex justify-center gap-8">
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={handleSwipeLeft}
-            className="w-16 h-16 rounded-full border-2 border-destructive/20 hover:border-destructive hover:bg-destructive/10"
-          >
-            <X className="w-6 h-6 text-destructive" />
-          </Button>
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={handleSwipeRight}
-            className="w-16 h-16 rounded-full border-2 border-primary/20 hover:border-primary hover:bg-primary/10"
-          >
-            <Heart className="w-6 h-6 text-primary" />
-          </Button>
+        
+        <div className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-16">
+          <div className="text-center space-y-2">
+            <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
+              <ArrowRight className="w-6 h-6 text-green-500" />
+            </div>
+            <div className="text-sm text-green-500 font-medium">YES</div>
+          </div>
         </div>
       </div>
     </div>

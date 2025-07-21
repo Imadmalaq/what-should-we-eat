@@ -13,28 +13,18 @@ const Index = () => {
   const [appState, setAppState] = useState<AppState>('hero');
   const [foodResult, setFoodResult] = useState<FoodRecommendation | null>(null);
   const [restaurant, setRestaurant] = useState<RestaurantRecommendation | null>(null);
-  const [showPaywall, setShowPaywall] = useState(false);
   const [hasLocation, setHasLocation] = useState(false);
-  
-  const { canUse, remainingUses, incrementUsage, isAtLimit } = useUsageTracking();
 
   const handleStartSwipe = () => {
-    if (!canUse && isAtLimit) {
-      setShowPaywall(true);
-      return;
-    }
-    
     // Check if we need location first
     navigator.geolocation.getCurrentPosition(
       () => {
         // Location permission granted, proceed
         setAppState('swipe');
-        incrementUsage();
       },
       () => {
         // Location denied or unavailable, show location prompt
         setAppState('location');
-        incrementUsage();
       },
       { timeout: 5000 }
     );
@@ -78,12 +68,6 @@ const Index = () => {
           onRestart={handleRestart}
         />
       )}
-
-      <PaywallModal
-        isOpen={showPaywall}
-        onClose={() => setShowPaywall(false)}
-        remainingUses={remainingUses}
-      />
     </div>
   );
 };

@@ -21,7 +21,7 @@ export function HeroSection({ onStartQuiz }: HeroSectionProps) {
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-              She says "I don't know" again? Swipe through 5 quick questions and get the perfect meal decision in under 2 minutes!
+              She says "I don't know" again? Answer 8–10 quick questions to find the perfect meal in under 2 minutes!
             </p>
           </div>
 
@@ -60,13 +60,12 @@ export function HeroSection({ onStartQuiz }: HeroSectionProps) {
           </div>
 
           {/* CTA Button */}
-          <div className="animate-slide-in">
+          <div className="animate-slide-in mt-12">
             <Button
               onClick={onStartQuiz}
               size="lg"
-              className="text-xl px-12 py-6 bg-gradient-romantic hover:opacity-90 text-white shadow-warm transform hover:scale-105 transition-all duration-200"
+              className="text-2xl px-16 py-8 bg-gradient-romantic hover:opacity-90 text-white shadow-warm transform hover:scale-105 transition-all duration-200 rounded-2xl font-bold"
             >
-              <Heart className="w-6 h-6 mr-3" />
               Start Swiping for Food!
             </Button>
           </div>
@@ -104,47 +103,6 @@ export function HeroSection({ onStartQuiz }: HeroSectionProps) {
             </Card>
           </div>
 
-          {/* Pricing Section */}
-          <div className="mt-16 animate-fade-in">
-            <Card className="max-w-md mx-auto border-2 border-primary/20 shadow-warm">
-              <CardContent className="p-8 text-center space-y-6">
-                <div className="w-16 h-16 mx-auto bg-gradient-romantic rounded-full flex items-center justify-center">
-                  <DollarSign className="w-8 h-8 text-white" />
-                </div>
-                
-                <div className="space-y-2">
-                  <h3 className="text-2xl font-bold">Unlimited Access</h3>
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="text-4xl font-bold text-primary">$4.99</span>
-                    <span className="text-muted-foreground">/month</span>
-                  </div>
-                </div>
-
-                <div className="space-y-3 text-left">
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span className="text-sm">Unlimited food decisions</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span className="text-sm">AI-powered personalized questions</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span className="text-sm">Local restaurant recommendations</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span className="text-sm">No more decision fatigue</span>
-                  </div>
-                </div>
-
-                <p className="text-xs text-muted-foreground">
-                  5 free decisions to try • Cancel anytime
-                </p>
-              </CardContent>
-            </Card>
-          </div>
 
           {/* Testimonial */}
           <div className="mt-12 animate-fade-in">
