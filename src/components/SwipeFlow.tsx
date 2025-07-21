@@ -3,19 +3,19 @@ import { Button } from '@/components/ui/button';
 import { SwipeCard } from '@/components/SwipeCard';
 import { Progress } from '@/components/ui/progress';
 import { foodRecommendations } from '@/data/swipeData';
-import { FoodRecommendation, SwipeQuestion, RestaurantRecommendation } from '@/types/app';
+import { FoodRecommendation, SwipeQuestion, RestaurantRecommendation, UserLocation } from '@/types/app';
 import { EnhancedAIQuestionService, calculateEnhancedRecommendation } from '@/services/enhancedAiService';
 import { RestaurantService } from '@/services/restaurantService';
-import { useLocation } from '@/hooks/useLocation';
 import { MealType } from '@/components/MealTypeSelector';
 import { Heart, X, ArrowLeft, ArrowRight } from 'lucide-react';
 
 interface SwipeFlowProps {
   onComplete: (result: FoodRecommendation, restaurant?: RestaurantRecommendation, allRestaurants?: RestaurantRecommendation[]) => void;
   mealType: MealType;
+  location: UserLocation | null;
 }
 
-export function SwipeFlow({ onComplete, mealType }: SwipeFlowProps) {
+export function SwipeFlow({ onComplete, mealType, location }: SwipeFlowProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<{ [key: string]: string }>({});
   const [questions, setQuestions] = useState<SwipeQuestion[]>([]);
@@ -23,7 +23,7 @@ export function SwipeFlow({ onComplete, mealType }: SwipeFlowProps) {
   
   const aiService = EnhancedAIQuestionService.getInstance();
   const restaurantService = RestaurantService.getInstance();
-  const { location } = useLocation();
+  
   const totalQuestions = 10;
 
   // Generate first question on mount
