@@ -2,8 +2,8 @@
 // Points to your private backend API
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://your-private-api.vercel.app/api'  // Replace with your actual API URL
-  : 'http://localhost:3001/api';  // Local development
+  ? 'https://whatshouldweeat-core.vercel.app/api'  // Your private backend API
+  : 'http://localhost:3000/api';  // Local development (Vercel dev server)
 
 export interface APIResponse<T> {
   success: boolean;
