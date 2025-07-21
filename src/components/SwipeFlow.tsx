@@ -77,8 +77,8 @@ export function SwipeFlow({ onComplete, mealType }: SwipeFlowProps) {
     setAnswers(newAnswers);
 
     if (isLastQuestion) {
-      // Calculate final recommendation using enhanced algorithm
-      const foodType = calculateEnhancedRecommendation(newAnswers);
+      // Calculate final recommendation using enhanced algorithm with meal type
+      const foodType = calculateEnhancedRecommendation(newAnswers, mealType);
       const result = foodRecommendations[foodType] || foodRecommendations.surprise;
       
       // Get specific restaurant recommendation

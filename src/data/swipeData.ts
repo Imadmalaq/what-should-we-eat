@@ -236,6 +236,57 @@ export const foodRecommendations: { [key: string]: FoodRecommendation } = {
     emoji: '🥘',
     suggestions: ['Exotic flavors', 'Aromatic spices', 'Cultural cuisine']
   },
+  // Ice cream specific recommendations
+  'ice-cream': {
+    type: 'ice-cream',
+    title: 'Classic Ice Cream! 🍦',
+    description: 'Creamy, delicious ice cream to satisfy your sweet tooth.',
+    emoji: '🍦',
+    suggestions: ['Sweet treat', 'Classic flavors', 'Cool refreshment']
+  },
+  gelato: {
+    type: 'gelato',
+    title: 'Artisan Gelato! 🍨',
+    description: 'Rich, dense Italian gelato with intense flavors.',
+    emoji: '🍨',
+    suggestions: ['Premium treat', 'Intense flavors', 'Artisan quality']
+  },
+  sorbet: {
+    type: 'sorbet',
+    title: 'Refreshing Sorbet! 🍧',
+    description: 'Light, fruity sorbet perfect for a healthy treat.',
+    emoji: '🍧',
+    suggestions: ['Light treat', 'Fruity flavors', 'Refreshing']
+  },
+  'exotic-ice-cream': {
+    type: 'exotic-ice-cream',
+    title: 'Exotic Ice Cream Flavors! 🍦',
+    description: 'Unique and adventurous ice cream flavors you\'ve never tried.',
+    emoji: '🍦',
+    suggestions: ['Unique flavors', 'Adventurous', 'Novel experience']
+  },
+  // Dessert specific
+  'chocolate-dessert': {
+    type: 'chocolate-dessert',
+    title: 'Decadent Chocolate! 🍫',
+    description: 'Rich chocolate desserts for the ultimate indulgence.',
+    emoji: '🍫',
+    suggestions: ['Indulgent', 'Rich chocolate', 'Decadent']
+  },
+  'fruit-dessert': {
+    type: 'fruit-dessert',
+    title: 'Fresh Fruit Dessert! 🍓',
+    description: 'Light, fresh fruit-based desserts.',
+    emoji: '🍓',
+    suggestions: ['Fresh', 'Light', 'Fruity']
+  },
+  cake: {
+    type: 'cake',
+    title: 'Delicious Cake! 🍰',
+    description: 'Classic cake perfect for any celebration.',
+    emoji: '🍰',
+    suggestions: ['Classic dessert', 'Celebration', 'Sweet treat']
+  },
   surprise: {
     type: 'surprise',
     title: 'Surprise Me! 🎉',

@@ -74,9 +74,9 @@ export class EnhancedAIQuestionService {
   }
 
   private getNextFilteredQuestion() {
-    // Get next question that hasn't been used
+    // Get next question that hasn't been used and has unique content
     const unusedQuestions = this.availableQuestions.filter(q => 
-      !this.questionHistory.includes(q.question)
+      !this.questionHistory.includes(q.id) // Use ID instead of question text to avoid duplicates
     );
     
     if (unusedQuestions.length === 0) {
@@ -93,6 +93,7 @@ export class EnhancedAIQuestionService {
     
     // Return the next question in priority order
     const nextQuestion = unusedQuestions[0];
+    this.questionHistory.push(nextQuestion.id); // Track by ID
     console.log('AI Service - selected question:', nextQuestion.question, 'for meal type:', this.currentMealType);
     
     return nextQuestion;
@@ -109,7 +110,9 @@ export class EnhancedAIQuestionService {
 }
 
 // Enhanced recommendation algorithm with better variety and specificity
-export function calculateEnhancedRecommendation(answers: { [key: string]: string }): string {
+export function calculateEnhancedRecommendation(answers: { [key: string]: string }, mealType?: MealType): string {
+  console.log('Calculating recommendation for meal type:', mealType, 'with answers:', answers);
+  
   const categories = Object.values(answers);
   const scores: { [key: string]: number } = {};
   
@@ -118,7 +121,63 @@ export function calculateEnhancedRecommendation(answers: { [key: string]: string
     scores[category] = (scores[category] || 0) + 1;
   });
 
-  // Much more comprehensive food mapping
+  // Meal type specific recommendations
+  if (mealType === 'ice-cream') {
+    if (categories.includes('indulgent') || categories.includes('splurge')) {
+      return 'gelato';
+    }
+    if (categories.includes('light') || categories.includes('healthy')) {
+      return 'sorbet';
+    }
+    if (categories.includes('adventurous')) {
+      return 'exotic-ice-cream';
+    }
+    return 'ice-cream'; // default ice cream
+  }
+  
+  if (mealType === 'dessert') {
+    if (categories.includes('indulgent') || categories.includes('chocolate')) {
+      return 'chocolate-dessert';
+    }
+    if (categories.includes('light') || categories.includes('fruit')) {
+      return 'fruit-dessert';
+    }
+    return 'cake';
+  }
+  
+  if (mealType === 'breakfast') {
+    if (categories.includes('healthy') || categories.includes('light')) {
+      return 'healthy-breakfast';
+    }
+    if (categories.includes('comfort') || categories.includes('hearty')) {
+      return 'hearty-breakfast';
+    }
+    return 'continental-breakfast';
+  }
+  
+  if (mealType === 'snacks') {
+    if (categories.includes('savory') || categories.includes('crunchy')) {
+      return 'savory-snacks';
+    }
+    if (categories.includes('sweet')) {
+      return 'sweet-snacks';
+    }
+    return 'mixed-snacks';
+  }
+  
+  if (mealType === 'drinks') {
+    if (categories.includes('alcohol') || categories.includes('cocktail')) {
+      return 'cocktails';
+    }
+    if (categories.includes('caffeine') || categories.includes('coffee')) {
+      return 'coffee';
+    }
+    return 'beverages';
+  }
+
+  // Full meal logic (existing logic for backward compatibility)
+  if (!mealType || mealType === 'full-meal') {
+    // Much more comprehensive food mapping
   const foodMapping = [
     // Japanese/Asian specific
     { conditions: ['japanese', 'elegant'], foods: ['sushi'], weight: 5 },
@@ -213,6 +272,10 @@ export function calculateEnhancedRecommendation(answers: { [key: string]: string
   storeRecommendation(topFood);
   
   return topFood;
+  }
+  
+  // Fallback
+  return 'surprise';
 }
 
 // Helper functions for recommendation history
