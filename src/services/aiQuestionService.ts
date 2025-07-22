@@ -25,55 +25,17 @@ export class AIQuestionService {
   }
 
   private async callAI(prompt: string): Promise<string> {
-    if (!this.apiKey) {
-      // Fallback to predefined questions if no API key
-      return this.getFallbackQuestions(prompt);
-    }
-
     try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      const response = await fetch('https://caoatympgdwiwicfidar.supabase.co/functions/v1/generate-questions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
-          messages: [
-            {
-              role: 'system',
-              content: `You are a creative food recommendation AI. Generate unique, engaging questions that help determine what someone should eat. 
-              
-              Return ONLY a valid JSON object with this exact structure:
-              {
-                "question": "What's your question?",
-                "emoji": "🤔",
-                "optionA": {
-                  "text": "Option A text",
-                  "emoji": "😊",
-                  "category": "category_name"
-                },
-                "optionB": {
-                  "text": "Option B text", 
-                  "emoji": "🔥",
-                  "category": "other_category"
-                }
-              }
-              
-              Make questions creative, fun, and specific to the meal type. Use varied categories like: comfort, adventurous, healthy, indulgent, spicy, mild, quick, elaborate, social, intimate, classic, modern, etc.`
-            },
-            {
-              role: 'user',
-              content: prompt
-            }
-          ],
-          temperature: 0.8,
-          max_tokens: 300
-        })
+        body: JSON.stringify({ prompt })
       });
 
       const data = await response.json();
-      return data.choices[0].message.content;
+      return data.content;
     } catch (error) {
       console.error('AI API call failed:', error);
       return this.getFallbackQuestions(prompt);

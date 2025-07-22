@@ -20,8 +20,8 @@ export function SwipeFlow({ onComplete, mealType }: SwipeFlowProps) {
   const [answers, setAnswers] = useState<{ [key: string]: string }>({});
   const [questions, setQuestions] = useState<SwipeQuestion[]>([]);
   const [isGeneratingQuestion, setIsGeneratingQuestion] = useState(false);
-  const [showApiKeyInput, setShowApiKeyInput] = useState(true);
-  const [useAI, setUseAI] = useState(false);
+  const [showApiKeyInput, setShowApiKeyInput] = useState(false);
+  const [useAI, setUseAI] = useState(true);
   
   const aiService = AIQuestionService.getInstance();
   const totalQuestions = 8;
@@ -40,6 +40,10 @@ export function SwipeFlow({ onComplete, mealType }: SwipeFlowProps) {
   };
 
   // Generate first question on component setup
+  useEffect(() => {
+    initializeQuiz();
+  }, []);
+
   const initializeQuiz = async () => {
     aiService.resetSession();
     setIsGeneratingQuestion(true);
