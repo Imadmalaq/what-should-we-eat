@@ -6,6 +6,7 @@ import { foodRecommendations } from '@/data/swipeData';
 import { FoodRecommendation, SwipeQuestion } from '@/types/app';
 import { calculateEnhancedRecommendation } from '@/services/enhancedAiService';
 import { AIQuestionService } from '@/services/aiQuestionService';
+import { AIRecommendationService } from '@/services/aiRecommendationService';
 import { ApiKeyInput } from '@/components/ApiKeyInput';
 import { MealType } from '@/components/MealTypeSelector';
 import { Heart, X, ArrowLeft, ArrowRight } from 'lucide-react';
@@ -24,6 +25,7 @@ export function SwipeFlow({ onComplete, mealType }: SwipeFlowProps) {
   const [useAI, setUseAI] = useState(true);
   
   const aiService = AIQuestionService.getInstance();
+  const aiRecommendationService = AIRecommendationService.getInstance();
   const totalQuestions = 8;
 
   const handleApiKeySet = (apiKey: string) => {
@@ -100,9 +102,20 @@ export function SwipeFlow({ onComplete, mealType }: SwipeFlowProps) {
     if (isLastQuestion) {
       // Calculate final recommendation using enhanced algorithm with meal type
       const foodType = calculateEnhancedRecommendation(newAnswers, mealType);
-      const result = foodRecommendations[foodType] || foodRecommendations.surprise;
+      const baseResult = foodRecommendations[foodType] || foodRecommendations.surprise;
       
-      onComplete(result);
+      // Get AI-enhanced recommendation
+      try {
+        const enhancedResult = await aiRecommendationService.getEnhancedRecommendation(
+          mealType,
+          newAnswers,
+          baseResult
+        );
+        onComplete(enhancedResult);
+      } catch (error) {
+        console.error('Failed to get AI recommendation:', error);
+        onComplete(baseResult);
+      }
     } else {
       // Generate next question based on current answers
       setIsGeneratingQuestion(true);
@@ -128,12 +141,24 @@ export function SwipeFlow({ onComplete, mealType }: SwipeFlowProps) {
   };
 
   // Helper function to complete the quiz
-  const handleQuizComplete = () => {
+  const handleQuizComplete = async () => {
     console.log('Quiz complete with answers:', answers);
     // Calculate final recommendation using enhanced algorithm with meal type
     const foodType = calculateEnhancedRecommendation(answers, mealType);
-    const result = foodRecommendations[foodType] || foodRecommendations.surprise;
-    onComplete(result);
+    const baseResult = foodRecommendations[foodType] || foodRecommendations.surprise;
+    
+    // Get AI-enhanced recommendation
+    try {
+      const enhancedResult = await aiRecommendationService.getEnhancedRecommendation(
+        mealType,
+        answers,
+        baseResult
+      );
+      onComplete(enhancedResult);
+    } catch (error) {
+      console.error('Failed to get AI recommendation:', error);
+      onComplete(baseResult);
+    }
   };
 
   // Helper function to get meal type specific fallback questions

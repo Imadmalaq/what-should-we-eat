@@ -26,6 +26,8 @@ export class AIQuestionService {
 
   private async callAI(prompt: string): Promise<string> {
     try {
+      console.log('Calling AI service with prompt:', prompt);
+      
       const response = await fetch('https://caoatympgdwiwicfidar.supabase.co/functions/v1/generate-questions', {
         method: 'POST',
         headers: {
@@ -34,8 +36,22 @@ export class AIQuestionService {
         body: JSON.stringify({ prompt })
       });
 
+      console.log('AI service response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('AI service error:', errorText);
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      }
+
       const data = await response.json();
-      return data.content;
+      console.log('AI service response data:', data);
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      
+      return data.content || this.getFallbackQuestions(prompt);
     } catch (error) {
       console.error('AI API call failed:', error);
       return this.getFallbackQuestions(prompt);

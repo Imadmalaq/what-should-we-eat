@@ -9,7 +9,7 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  console.log('Edge function called:', req.method);
+  console.log('Recommendation function called:', req.method);
   
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -19,7 +19,7 @@ serve(async (req) => {
     const body = await req.json();
     console.log('Request body:', body);
     
-    const { prompt } = body;
+    const { mealType, answers, baseRecommendation } = body;
 
     if (!openAIApiKey) {
       console.error('OpenAI API key not found');
@@ -29,7 +29,31 @@ serve(async (req) => {
       });
     }
 
-    console.log('Making OpenAI request with prompt:', prompt);
+    // Create a prompt based on the user's answers and meal type
+    const answersText = Object.entries(answers)
+      .filter(([key, value]) => key !== 'mealType')
+      .map(([key, value]) => value)
+      .join(', ');
+
+    const prompt = `Based on a user's food preferences quiz, provide a specific food recommendation.
+
+User chose: ${mealType}
+User's preferences: ${answersText}
+Base category: ${baseRecommendation.category}
+
+Provide a specific, detailed food recommendation that matches their preferences. For example:
+- If ice cream: specify flavor combinations, toppings, or style (e.g., "Salted Caramel Gelato with Dark Chocolate Chunks")
+- If full meal: specify cuisine and dish (e.g., "Korean BBQ Bulgogi with Kimchi")
+- If breakfast: specify dish and style (e.g., "Fluffy Buttermilk Pancakes with Fresh Berries")
+
+Return ONLY a JSON object with this structure:
+{
+  "title": "Specific Food Name",
+  "description": "Brief description of why this matches their preferences",
+  "searchTerm": "Simple search term for maps/delivery apps"
+}`;
+
+    console.log('Making OpenAI request for recommendation');
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -42,33 +66,15 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `You are a creative food recommendation AI. Generate unique, engaging questions that help determine what someone should eat. 
-            
-            Return ONLY a valid JSON object with this exact structure:
-            {
-              "question": "What's your question?",
-              "emoji": "🤔",
-              "optionA": {
-                "text": "Option A text",
-                "emoji": "😊",
-                "category": "category_name"
-              },
-              "optionB": {
-                "text": "Option B text", 
-                "emoji": "🔥",
-                "category": "other_category"
-              }
-            }
-            
-            Make questions creative, fun, and specific to the meal type. Use varied categories like: comfort, adventurous, healthy, indulgent, spicy, mild, quick, elaborate, social, intimate, classic, modern, etc.`
+            content: 'You are a food expert who provides specific, personalized food recommendations based on user preferences. Always return valid JSON.'
           },
           {
             role: 'user',
             content: prompt
           }
         ],
-        temperature: 0.8,
-        max_tokens: 300
+        temperature: 0.7,
+        max_tokens: 200
       })
     });
 
@@ -95,14 +101,14 @@ serve(async (req) => {
       });
     }
     
-    console.log('Returning content:', content);
+    console.log('Returning recommendation:', content);
     return new Response(JSON.stringify({ 
-      content: content 
+      recommendation: content 
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error('Error in generate-questions function:', error);
+    console.error('Error in generate-recommendation function:', error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

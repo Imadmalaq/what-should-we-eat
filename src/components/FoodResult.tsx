@@ -27,13 +27,27 @@ export function FoodResult({ result, onRestart }: FoodResultProps) {
   };
 
   const handleFindNearby = () => {
-    const cleanFoodType = extractFoodType(result.title);
-    window.open(`https://www.google.com/maps/search/${encodeURIComponent(cleanFoodType)}`, '_blank');
+    try {
+      const cleanFoodType = extractFoodType(result.title);
+      const safeFoodType = cleanFoodType || 'food';
+      const encodedFood = encodeURIComponent(safeFoodType);
+      window.open(`https://www.google.com/maps/search/${encodedFood}+near+me`, '_blank');
+    } catch (error) {
+      console.error('Error opening Google Maps:', error);
+      window.open(`https://www.google.com/maps/search/food+near+me`, '_blank');
+    }
   };
 
   const handleOrderUberEats = () => {
-    const cleanFoodType = extractFoodType(result.title);
-    window.open(`https://www.ubereats.com/search?q=${encodeURIComponent(cleanFoodType)}`, '_blank');
+    try {
+      const cleanFoodType = extractFoodType(result.title);
+      const safeFoodType = cleanFoodType || 'food';
+      const encodedFood = encodeURIComponent(safeFoodType);
+      window.open(`https://www.ubereats.com/search?q=${encodedFood}`, '_blank');
+    } catch (error) {
+      console.error('Error opening Uber Eats:', error);
+      window.open(`https://www.ubereats.com/search?q=food`, '_blank');
+    }
   };
 
   const [isSharing, setIsSharing] = useState(false);
